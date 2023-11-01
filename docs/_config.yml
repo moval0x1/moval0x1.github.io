@@ -1,0 +1,6 @@
+remote_theme: pages-themes/slate@v0.2.0
+plugins:
+- jekyll-remote-theme
+- jekyll-seo-tag
+title: [The Reverser's Draft]
+description: [Coding & Malware & Reverse Engineering]
