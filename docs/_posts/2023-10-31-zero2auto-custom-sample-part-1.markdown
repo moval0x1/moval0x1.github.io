@@ -83,8 +83,9 @@ Doubling click on the first call and setting a BP on it, we can now start our de
 
 To summarize, let me put here just the translations.
 
-| Before             | After             |
-| -----------------  | ----------------- |
+```
+| Before             | After              |
+| -----------------  | -----------------  |
 | F5gG8e514pbag5kg   | SetThreadContext   |
 | .5ea5/QPY4//       | kernel32.dll       |
 | pe51g5Ceb35ffn     | CreateProcessA     |
@@ -98,6 +99,7 @@ To summarize, let me put here just the translations.
 | s9a4E5fbhe35n      | FindResourceA      |
 | yb3.E5fbhe35       | LockResource       |
 | yb14E5fbhe35       | LoadResource       |
+```
 
 Yeah! Now we can see that we will find exciting things being made with the resource and memory; just looking at these APIs, we can already imagine that something might be injected, and it seems like the resource. The next step for me is to pay attention to the **```VirtualAlloc```** and **```VirtualAllocEx```** and all the **```resource```** APIs.
 
