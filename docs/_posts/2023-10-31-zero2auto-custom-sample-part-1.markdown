@@ -17,7 +17,7 @@ I have uploaded the sample alongside this email.
 ## Triage
 Let's start looking at this binary to see what information we can collect to create our hypothesis. DiE tells us that we are dealing with a 32-bit binary compiled with Microsoft Visual Studio, and the language is C/C++. Also, it has Anti-Debugger protection.
 
-![Detect It Easy](../assets/images/zero2auto/DiE-main-bin.png)
+![Detect It Easy](/assets/images/zero2auto/DiE-main-bin.png)
 
 When we are looking at a binary, it is not recommended to use only one thing as evidence; I mean, we need to be sure that, for example, this sample has any kind of protection. To be sure about it, we can use - besides the automatic scan from DiE.
 
