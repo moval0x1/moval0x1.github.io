@@ -66,15 +66,15 @@ Here you can see how it works on [Binary Ninja](https://binary.ninja/).
 ![Decode strings Binja Plugin](/assets/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif)
 
 ## Further Stages
-Looking at the strings, I found something that caught my eye; there was a **```cruloader```** and it looked weird; maybe the name of this second part? Perhaps it's a joke? Who knows? I'm assuming that, in fact, it is a part of the malware and not a joke.
+Looking at the strings, I found something that caught my eye; there was a **```cruloader```** and it looked weird; maybe the name of this second part? Perhaps it's a joke? Who knows? I'm assuming it is a part of the malware and not a joke.
 
 ![Cruloader](/assets/images/zero2auto/2023-11-19/bn-cruloader.png)
 
-DiE tells us that we are dealing with a C/C++ program.
+DiE tells us that we are dealing with a **```C/C++```** program.
 
 ![DiE](/assets/images/zero2auto/2023-11-19/DiE-cruloader.png)
 
-Usually, when I have to deal with it, my first step is to go to the **```main```** function that usually for **```C/C++``**` program can be found by three pushes before a call, something like that.
+Usually, when I have to deal with it, my first step is to go to the **```main```** function that usually for **```C/C++```** program can be found by three pushes before a call, something like that.
 
 ```
 push something
