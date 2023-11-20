@@ -17,7 +17,7 @@ I have uploaded the sample alongside this email.
 ## Triage
 Let's start looking at this binary to see what information we can collect to create our hypothesis. DiE tells us that we are dealing with a 32-bit binary compiled with Microsoft Visual Studio, and the language is C/C++. Also, it has Anti-Debugger protection.
 
-![Detect It Easy](/assets/images/zero2auto/DiE-main-bin.png)
+![Detect It Easy](/assets/images/zero2auto/2023-10-31/DiE-main-bin.png)
 
 When we are looking at a binary, it is not recommended to use only one thing as evidence; I mean, we need to be sure that, for example, this sample has any kind of protection. To be sure about it, we can use - besides the automatic scan from DiE.
 
@@ -28,15 +28,15 @@ When we are looking at a binary, it is not recommended to use only one thing as 
 
 Here we can see that the [entropy](https://redcanary.com/blog/threat-hunting-entropy/) for the **```.rsrc```** section is **```7.9```**. DiE helps us by telling us that it is packed - and at this point, I totally agree.
 
-![Entropy](/assets/images/zero2auto/DiE-entropy.png)
+![Entropy](/assets/images/zero2auto/2023-10-31/DiE-entropy.png)
 
 Following the steps to validate our binary, we can identify a small number of readable strings and some weird strings as shown in the image below. This could be a good indicator that strings are created in runtime, or that there is any kind of obfuscation here, as we don't know yet it is just an indicator that should be validated.
 
-![Strings](/assets/images/zero2auto/DiE-strings.png)
+![Strings](/assets/images/zero2auto/2023-10-31/DiE-strings.png)
 
 Also, we have here just one import. Looks really suspicious to me, we can keep taking a look at other points, but for me, at this point, we have some interesting things here to investigate and validate. My hypothesis now, based on the triage is:
 
-![Imports](/assets/images/zero2auto/DiE-imports.png)
+![Imports](/assets/images/zero2auto/2023-10-31/DiE-imports.png)
 
 1. The program is with some kind of packing.
 2. We have a resource that probably will be used and it is also packed.
@@ -53,7 +53,7 @@ Why? Simple! We have here **```GetProcAddress```** and **```LoadLibrary```**. Us
 1. Debugging it and seeing the names.
 2. Creating a script to resolve the name for us.
 
-![Binary Ninja](/assets/images/zero2auto/Binja-cross-reference.png)
+![Binary Ninja](/assets/images/zero2auto/2023-10-31/Binja-cross-reference.png)
 
 So, the second option looks gorgeous, but by now, let me just get the names using x64dbg. In a second moment, I can create it and add it to this analysis.
 
@@ -61,19 +61,19 @@ First of all, I renamed the address **```0x00401300```** to **```mw_resolve_api`
 
 Not only do good things happen when we are reversing something, but sometimes we have to deal with destiny. In this case, we will not need much. We can rebase our binja to get the correct address, we can remove [ASLR](https://www.sans.org/blog/dealing-with-aslr-when-analyzing-malware-on-windows-8-1/) with our **```x64dbg```**, but I will just set the address without the base address. Look, I'm getting this error.
 
-![x64dbg](/assets/images/zero2auto/x64dbg-address-error.png)
+![x64dbg](/assets/images/zero2auto/2023-10-31/x64dbg-address-error.png)
 
 Because in my dbg the base address is not **```0x00400000```**, we can confirm it by taking a look on **```Memory Map```** and then, we see that my base is **```0x009F0000```**.
 
-![Memory Map](/assets/images/zero2auto/x64dbg-memory-map.png)
+![Memory Map](/assets/images/zero2auto/2023-10-31/x64dbg-memory-map.png)
 
 What should I do? Just use **```0x009F1300```**, easy and now I can rename this function as **```mw_resolve_api```**. All good now! :)
 
-![mw_resolve_api](/assets/images/zero2auto/x64dbg-mw-resolve-api.png)
+![mw_resolve_api](/assets/images/zero2auto/2023-10-31/x64dbg-mw-resolve-api.png)
 
 Now, I would like to see where this function is called; I just need to press **```x```** on the line above - that is the beginning of this function - and I will see the cross references.
 
-![Xref](/assets/images/zero2auto/x64dbg-xref.png)
+![Xref](/assets/images/zero2auto/2023-10-31/x64dbg-xref.png)
 
 Doubling click on the first call and setting a BP on it, we can now start our debugging and get all the names after passing by this call.
 
@@ -105,7 +105,7 @@ Yeah! Now we can see that we will find exciting things being made with the resou
 
 Using the dbg and knowing that the functions would be resolved at runtime, the program at the beginning calls **```CreateProcessA```**
 
-![CreateProcessA](/assets/images/zero2auto/x64dbg-create-process-a.png)
+![CreateProcessA](/assets/images/zero2auto/2023-10-31/x64dbg-create-process-a.png)
 
 As we can see here on the [MSDN](https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa) definition. 
 
@@ -126,7 +126,7 @@ BOOL CreateProcessA(
 
 The 4th param is 4. According to MSDN, the process flags set on [deCreationFlags](https://learn.microsoft.com/en-us/windows/win32/procthread/process-creation-flags) should be created in a suspended state.
 
-![CREATE_SUSPENDED](/assets/images/zero2auto/msdn-create-suspended.png)
+![CREATE_SUSPENDED](/assets/images/zero2auto/2023-10-31/msdn-create-suspended.png)
 
 > Another quick explanation here!
 >
@@ -134,7 +134,7 @@ The 4th param is 4. According to MSDN, the process flags set on [deCreationFlags
 
 Using Process Hacker to confirm it, we are able to see that after executing the **```CreateProcessA```**, another binary is created, and the color is set to gray.
 
-![Process Hacker](/assets/images/zero2auto/ph-suspended-bin.png)
+![Process Hacker](/assets/images/zero2auto/2023-10-31/ph-suspended-bin.png)
 
 
 > Another quick explanation here!
@@ -143,17 +143,17 @@ Using Process Hacker to confirm it, we are able to see that after executing the 
 >- Hacker > Options > Highlight
 
 
-![Process Hacker > Options](/assets/images/zero2auto/ph-options.png)
+![Process Hacker > Options](/assets/images/zero2auto/2023-10-31/ph-options.png)
 
 As the process was created and **```EAX```** returns **```1```**, we can keep our analysis. After that **```VirtualAlloc```** is called and the return address is **```0x00DB0000```**. Just put it on dump by following the right-click on **```EAX > Follow in Dump```**. After that **```GetThreadContext```** is called. Let's take a look at what this API is used for.
 
 This time I'm using another good place to learn about APIs, the [MalAPI](https://malapi.io/winapi/GetThreadContext) tells us.
 
-![MalAPI](/assets/images/zero2auto/malapi-get-thread-context.png)
+![MalAPI](/assets/images/zero2auto/2023-10-31/malapi-get-thread-context.png)
 
 To be honest, nothing new, right? We have already put an injection as a feasible hypothesis. The handle passed to this function was **```0x110```**, and we can see that it is related to our new instance. How can I know that? Simple! Looking for the **```PID```**, is the same ;P
 
-![Threads](/assets/images/zero2auto/x64dbg-thread.png)
+![Threads](/assets/images/zero2auto/2023-10-31/x64dbg-thread.png)
 
 We are finding interesting things here, let's move on. After that there is a call to **```ReadProcessMemory```**. And, according to [MSDN](https://learn.microsoft.com/en-us/windows/win32/api/memoryapi/nf-memoryapi-readprocessmemory).
 
@@ -169,7 +169,7 @@ BOOL ReadProcessMemory(
 
 Here we have the params, the **```hProcess```**, **```lpBaseAddress```** and **```lpBuffer```**.
 
-![ReadProcessMemory Params](/assets/images/zero2auto/x64dbg-read-process-memory.png)
+![ReadProcessMemory Params](/assets/images/zero2auto/2023-10-31/x64dbg-read-process-memory.png)
 
 Let's summarize after that, OK? It calls **```VirtualAllocEx```** to allocate memory in this new binary created, and calls **```WriteProcessMemory```** to put the new content there and calls **```SetThreadContext```** and then, **```ResumeThread```**. Nice, we are done, right? We saw everything, and we understood things there, so we finished! 
 
@@ -181,15 +181,15 @@ Now we know what and how to do things, so. Let's start it again.
 
 Okay, to speed up our process, we don't need to see everything again; just put a BP on **```VirtualAlloc```**, **```VirtualAllocEx```**, **```FindResourceA```** and **```LoadResource```**. With all needed BP sets, just run.
 
-![BreakPoints](/assets/images/zero2auto/x64dbg-breakpoints.png)
+![BreakPoints](/assets/images/zero2auto/2023-10-31/x64dbg-breakpoints.png)
 
 The program first stops at the **```FindResource```** and after that, a call to **```LoadResource```**, and it results in the resource file loaded at the address **```0x00A06060```** as the image below.
 
-![Resource Loaded](/assets/images/zero2auto/x64dbg-resource-loaded.png)
+![Resource Loaded](/assets/images/zero2auto/2023-10-31/x64dbg-resource-loaded.png)
 
 After that **```VirtualAlloc```** is called and in sequence we have a function which receives three arguments. Put all them on dump we have:
 
-![Weird Function](/assets/images/zero2auto/x64dbg-weird-function.png)
+![Weird Function](/assets/images/zero2auto/2023-10-31/x64dbg-weird-function.png)
 
 1. The address allocated with **```VirtualAlloc```**
 2. A weird content
@@ -273,18 +273,18 @@ When ECX receives the content from EBX we have here 0x1C, the size from the reso
 
 And for me, it looks like [RC4 Cipher](https://en.wikipedia.org/wiki/RC4). I have already dealt with it in an old video that you can find it here.
 
-[![RC4 Extractor](/assets/images/zero2auto/youtube-rc4-extractor.png)](https://www.youtube.com/watch?v=-Kk-r5NxtSA "RC4 Extractor")
+[![RC4 Extractor](/assets/images/zero2auto/2023-10-31/youtube-rc4-extractor.png)](https://www.youtube.com/watch?v=-Kk-r5NxtSA "RC4 Extractor")
 
 Based on that, this difference looks like the RC4 Key and the rest that should be decoded, using [cyberchef](https://cyberchef.org/) when can easily validate it.
 
-![RH Key](/assets/images/zero2auto/rh-key.png)
+![RH Key](/assets/images/zero2auto/2023-10-31/rh-key.png)
 
 I have the possible key:
 >01 DD 0C 92 00 22 00 00 00 22 00 00 6B 6B 64 35 59 64 50 4D 32 34 56 42 58 6D 69 00
 
 And I got just some bytes to validate if it is correct.
 
-![RH Binary](/assets/images/zero2auto/rh-binary-encoded.png)
+![RH Binary](/assets/images/zero2auto/2023-10-31/rh-binary-encoded.png)
 
 >03 3C 65 A7 
 EC 58 FB B6 93 E6 EC E7 89 00 00 27 72 20 65 29 
@@ -295,20 +295,20 @@ D4 82 54 DA 8A 93 19 99 1C 21 A9 12 C5 2A 1B 4A
 
 Unfortunately, it didn't work, so sad, no?
 
-![Cyber Chef](/assets/images/zero2auto/cc-rc4-error.png)
+![Cyber Chef](/assets/images/zero2auto/2023-10-31/cc-rc4-error.png)
 
 Not really, just keeping taking a look on dbg we can see that it does not use the **```0x1C```**; it starts by the **```0xC```** position, so our key was almost correct, but we found out that the correct one is with only **```0xF```** bytes.
 
-![RC4 Correct Key](/assets/images/zero2auto/x64dbg-rc4-correct-key.png)
-![RH Correct Key](/assets/images/zero2auto/rh-correct-key.png)
+![RC4 Correct Key](/assets/images/zero2auto/2023-10-31/x64dbg-rc4-correct-key.png)
+![RH Correct Key](/assets/images/zero2auto/2023-10-31/rh-correct-key.png)
 
 Very cool, isn't it? Trying this key one more time, we got the correct and beautiful **```MZ```** <3
 
-![RC4 Correct](/assets/images/zero2auto/cc-rc4-correct.png)
+![RC4 Correct](/assets/images/zero2auto/2023-10-31/cc-rc4-correct.png)
 
 And now, we know...
 
-![I Know What You Did Last Summer Filme](/assets/images/zero2auto/movie.png)
+![I Know What You Did Last Summer Filme](/assets/images/zero2auto/2023-10-31/movie.png)
 
 After that, happens the same as we've previously analyzed it. We should now analyze this resource! But, it will be in the next part of this **```Zero2Auto Custom Sample```** series.
 
