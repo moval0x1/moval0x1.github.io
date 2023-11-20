@@ -2,7 +2,7 @@
 layout: post
 title:  "Zero2Auto Custom Sample - Part 2"
 description: Zero2Auto Custom Sample - Part 2
-date:   2023-11-19 17:03:36 +0000
+date:   2023-11-19 23:05:00 +0000
 categories: Zero2Auto Reversing Malware
 ---
 ## Binary Ninja Plugin
