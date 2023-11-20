@@ -8,9 +8,7 @@ categories: Zero2Auto Reversing Malware
 ## Binary Ninja Plugin
 To start this second part of the custom sample analysis, I would like to add the script created using [Binary Ninja](https://binary.ninja/). You can find the doc [here](https://docs.binary.ninja/).
 
-The script is not complex - if you have any suggestions to improve this, please share them with me :) - and it is probably not the fanciest code you have been seeing, but it is something that works, lol.
-
-It can be found on my **[Github](https://github.com/moval0x1/Zero2Auto/blob/main/zero2auto-custom-sample-decode.py)** page.
+The script is not complex - if you have any suggestions to improve this, please share them with me :) - and it is probably not the fanciest code you have been seeing, but it is something that works, lol. It can be found on my **[Github](https://github.com/moval0x1/Zero2Auto/blob/main/zero2auto-custom-sample-decode.py)** page.
 
 Here you can see how it works on [Binary Ninja](https://binary.ninja/).
 
