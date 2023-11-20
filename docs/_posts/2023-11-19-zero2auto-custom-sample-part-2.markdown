@@ -101,9 +101,9 @@ One of the first results brings us the information that this is a [CRC32](https:
 
 This part is so cool when we understand what is going on here. Look, this function resolves most of the content in run time, but it does not mean that we cannot understand the result without debugging it; basically, the malware gets this hex value and performs a loop, as shown on the left side. We can summarize it as:
 
-1) Get the char[i].
-2) Rotate Left char[i] with 4.
-3) XOR char[i] with 0xC5.
+- Get the char[i].
+- Rotate Left char[i] with 4.
+- XOR char[i] with 0xC5.
 
 ![Get Pastebin URL](/assets/images/zero2auto/2023-11-19/bn-get-pastebin-url.png)
 
