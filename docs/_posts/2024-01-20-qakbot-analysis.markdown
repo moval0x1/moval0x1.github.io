@@ -103,6 +103,6 @@ For easy reference, the extracted configurations can be located [here](https://g
 
 ## Concluding Thoughts
 
-While there are numerous other aspects to explore in this second stage of Qakbot, I'll conclude this sample discussion here. An opportunity exists for those interested in delving deeper to uncover the encrypted communication methods employed within this sample. Perhaps in a future version, I will undertake this exploration. Thus far, my encounter with Qakbot has been a valuable learning experience, guiding me to develop two plugins for Binja, which have proven immensely helpful.
+While there are numerous other aspects to explore in this second stage of Qakbot, I'll conclude this sample discussion here. An opportunity exists for those interested in delving deeper to uncover the encrypted communication methods employed within this sample. Perhaps in a future version, I will undertake this exploration. Thus far, my encounter with Qakbot has been a valuable learning experience, guiding me to develop two plugins for **Binja** [BinjaExportTox64dbg](https://github.com/moval0x1/BinjaExportTox64dbg) and [CommentsAndSymbols](https://github.com/moval0x1/CommentsAndSymbols).
 
 Thank you for taking the time to read this! Should you have any questions or suggestions, please don't hesitate to reach out. Feel free to contact me at your convenience! :)
