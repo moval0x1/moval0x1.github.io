@@ -12,17 +12,17 @@ categories: Zero2Auto Reversing Malware
 ## Loader
 When I got this sample, the first thing that caught my eye was the lack of strings and the number of sections with their names, which is not something normal in a binary.
 
-![DiE Sections](../assets/images/zero2auto/2024-01-20/die-sections.png)
+![DiE Sections](/assets/images/zero2auto/2024-01-20/die-sections.png)
 
 My starting point in these cases is to set some breakpoints in known APIs such as ```VirtualAlloc```, ```VirtualProtect```, ```WriteProcessMemory```, ```CreateProcessInternalW``` and others that can be used in the same context, either to self injection or remote injection. I could execute the binary and validate if it has some injection or anything related to that. However, let's start putting BP on the common APIs used for any injection.
 
 In that case, as I set a BP on VirtualProtect, it stopped on the API, and I arrived at the right point after putting the PE section onto the dump.
 
-![x64dbg Dump](../assets/images/zero2auto/2024-01-20/x64dbg-dump.png)
+![x64dbg Dump](/assets/images/zero2auto/2024-01-20/x64dbg-dump.png)
 
 We have the second stage file at the base address ```0x2550000```. To dump it, follow these steps: **Right Click on ```0x4D``` on dump -> Follow in Memory Map -> Right-click on the base address -> Dump Memory to File**.
 
-![PE-bear Imports](../assets/images/zero2auto/2024-01-20/pe-bear-imports.png)
+![PE-bear Imports](/assets/images/zero2auto/2024-01-20/pe-bear-imports.png)
 
 We can see on [PE-bear](https://github.com/hasherezade/pe-bear) that all the imports are good, so we don't need anything to fix it! :)
 
@@ -30,21 +30,21 @@ We can see on [PE-bear](https://github.com/hasherezade/pe-bear) that all the imp
 
 In this stage, what caught my attention was the entropy to the ```.rdata``` section and ```.rsrc```, and the lack of useful strings.
 
-![DiE Entropy](../assets/images/zero2auto/2024-01-20/die-entropy.png)
+![DiE Entropy](/assets/images/zero2auto/2024-01-20/die-entropy.png)
 
 Using BinaryNinja to take a look in that stage, I was able to see a interesting function with lots of calls and the result of these function be a value that would be used in a ```GetModuleHandleA```. Hmm, it raised some flag to me.
 
-![BinaryNinja Decrypt Func](../assets/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png)
+![BinaryNinja Decrypt Func](/assets/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png)
 
 Looking at this function in the **x64dbg**, things become easier to understand. I could see that after passing this function, it returns a string decrypted. Within this function, we can see the decrypt pattern, as shown below.
 
-![x64dbg Decrypt Routine](../assets/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png)
+![x64dbg Decrypt Routine](/assets/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png)
 
 To add a layer of simplicity to my **binja** analysis, I just created a simple (and maybe not so good) script to decrypt all these strings and add them as a comment. I've tried to create the script as close as possible to what's in the assembly code.
 
 Here are the **binja [scripts](https://github.com/moval0x1/Zero2Auto/tree/main/qakbot)** used to decrypt strings, APIs, and anything needed for this analysis. After that, you'll find something like that.
 
-![Binary Ninja Plugin](../assets/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png)
+![Binary Ninja Plugin](/assets/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png)
 
 With strings, it is much better to dive into the malware. Unfortunately, some APIs are resolved in runtime, and even with the names, I cannot see where it would be called. Based on that, I went to the debugger, and with a hand from my friend [**Leandro**](https://leandrofroes.github.io/) - he showed me about this anti-analysis process that I've passed and didn't catch the idea of - I could understand that the ``CreateProcess`` was started as an anti-analysis step. Ask for help is an excellent way to learn; I learned a new trick with his help; thanks, man.
 
@@ -54,11 +54,11 @@ Let me try to summarize things here.
 2. This parameter starts a series of **anti-analysis** tricks and leads us down the wrong path.
 3. Forcing the result **false** after the ```CreateProcess```.
 
-![CreateProcessW](../assets/images/zero2auto/2024-01-20/x64dbg-create-process-w.png)
+![CreateProcessW](/assets/images/zero2auto/2024-01-20/x64dbg-create-process-w.png)
 
 With the flow passing by the anti-analysis part, we will not find anything interesting. I've changed the ```EAX``` from ```1``` to ```0```. As mentioned at the beginning of this first stage, we have a high entropy in the ```.rsrc``` part; based on that, I've added a breakpoint on the ```LoadResource``` API. However, this API is only noticed after decrypting the API names, as shown in the image below.
 
-![CommentsAndSymbols](../assets/images/zero2auto/2024-01-20/bn-comments-and-symbols.png)
+![CommentsAndSymbols](/assets/images/zero2auto/2024-01-20/bn-comments-and-symbols.png)
 
 Now, let us analyze the actual flow!
 
@@ -82,7 +82,7 @@ It is easy, but it is much better to have a script to help us find it in the res
 
 To understand what the scripts do, let me briefly explain here. We have here a normal ``RC4`` routine followed by a ``SHA1 SUM`` validation. Although we can see the program here - at least a part of it - **This Program cannot...**. It doesn't look like the complete straightforward program; after the ``SHA1`` validation, a weird value was found that is used out of this call in a comparison: ``0x616CD31A``. Searching for it, I only found it in a blog of a friend of mine [**dark0pcodes**](https://darkopcodes.wordpress.com/2020/06/07/malware-analysis-qakbot-part-2/). Based on what he says, it is a modified version of the [**BriefLZ**](https://github.com/jibsen/brieflz) compression algorithm, which makes much more sense now.
 
-![Decrypt Resource Routine](../assets/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png)
+![Decrypt Resource Routine](/assets/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png)
 
 In order to decompress this file correctly after decrypting, we need to replace the modified bytes with the correct bytes, as added in the script found on GitHub.
 
