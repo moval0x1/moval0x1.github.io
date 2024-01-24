@@ -1,0 +1,34 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Zero2Auto - Tag - The Reverser&#39;s Draft</title>
+        <link>https://moval0x1.github.io/tags/zero2auto/</link>
+        <description>Zero2Auto - Tag - The Reverser&#39;s Draft</description>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Sat, 20 Jan 2024 14:59:04 -0300</lastBuildDate><atom:link href="https://moval0x1.github.io/tags/zero2auto/" rel="self" type="application/rss+xml" /><item>
+    <title>Qakbot Analysis</title>
+    <link>https://moval0x1.github.io/posts/qakbot-analysis/</link>
+    <pubDate>Sat, 20 Jan 2024 14:59:04 -0300</pubDate>
+    <author>moval0x1</author>
+    <guid>https://moval0x1.github.io/posts/qakbot-analysis/</guid>
+    <description><![CDATA[The Qakbot Malware Family QBot is a modular information stealer also known as Oakboat, Pinkslipbot, Qbot or Quakbot. It has been active for years since 2007. It has historically been known as a banking Trojan, meaning that it steals financial data from infected systems, and a loader using C2 servers for payload targeting and download.
+Loader When I got this sample, the first thing that caught my eye was the lack of strings and the number of sections with their names, which is not something normal in a binary.]]></description>
+</item>
+<item>
+    <title>Zero 2 Auto Custom sample - Part 2</title>
+    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/</link>
+    <pubDate>Sun, 19 Nov 2023 21:03:36 &#43;0800</pubDate>
+    <author>moval0x1</author>
+    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/</guid>
+    <description><![CDATA[Binary Ninja Plugin To start this second part of the custom sample analysis, I would like to add the script created using Binary Ninja. You can find the doc here.
+The script is not complex - if you have any suggestions to improve this, please share them with me :) - and it is probably not the fanciest code you have been seeing, but it is something that works, lol. It can be found on my Github page.]]></description>
+</item>
+<item>
+    <title>Zero 2 Auto Custom sample - Part 1</title>
+    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part1/</link>
+    <pubDate>Tue, 31 Oct 2023 21:03:36 &#43;0800</pubDate>
+    <author>moval0x1</author>
+    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part1/</guid>
+    <description><![CDATA[The IR Case Hi there,
+During an ongoing investigation, one of our IR team members managed to locate an unknown sample on an infected machine belonging to one of our clients. We cannot pass that sample onto you currently as we are still analyzing it to determine what data was exfilatrated. However, one of our backend analysts developed a YARA rule based on the malware packer, and we were able to locate a similar binary that seemed to be an earlier version of the sample we&rsquo;re dealing with.]]></description>
+</item>
+</channel>
+</rss>

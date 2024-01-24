@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en-us">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="robots" content="noodp" />
+        <title>Zero 2 Auto Custom sample - Part 2 - The Reverser&#39;s Draft</title><meta name="Description" content="Zero2Auto Custom Sample - Part 2"><meta property="og:title" content="Zero 2 Auto Custom sample - Part 2" />
+<meta property="og:description" content="Zero2Auto Custom Sample - Part 2" />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/" /><meta property="og:image" content="https://moval0x1.github.io/logo.png" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2023-11-19T21:03:36+08:00" />
+<meta property="article:modified_time" content="2023-11-19T21:03:36+08:00" /><meta property="og:site_name" content="The Reverser&#39;s Draft" />
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:image" content="https://moval0x1.github.io/logo.png" /><meta name="twitter:title" content="Zero 2 Auto Custom sample - Part 2"/>
+<meta name="twitter:description" content="Zero2Auto Custom Sample - Part 2"/>
+<meta name="twitter:site" content="@moval0x1"/>
+<meta name="application-name" content="The Reverser&#39;s Draft">
+<meta name="apple-mobile-web-app-title" content="The Reverser&#39;s Draft"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c"><link rel="icon" href="favicon.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/" /><link rel="prev" href="https://moval0x1.github.io/posts/zero2auto-custom-sample-part1/" /><link rel="next" href="https://moval0x1.github.io/posts/qakbot-analysis/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
+    {
+        "@context": "http://schema.org",
+        "@type": "BlogPosting",
+        "headline": "Zero 2 Auto Custom sample - Part 2",
+        "inLanguage": "en-us",
+        "mainEntityOfPage": {
+            "@type": "WebPage",
+            "@id": "https:\/\/moval0x1.github.io\/posts\/zero2auto-custom-sample-part2\/"
+        },"image": [{
+                            "@type": "ImageObject",
+                            "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
+                            "width":  457 ,
+                            "height":  457 
+                        }],"genre": "posts","keywords": "Zero2Auto, Malware, Reversing","wordcount":  1637 ,
+        "url": "https:\/\/moval0x1.github.io\/posts\/zero2auto-custom-sample-part2\/","datePublished": "2023-11-19T21:03:36+08:00","dateModified": "2023-11-19T21:03:36+08:00","publisher": {
+            "@type": "Organization",
+            "name": "xxxx","logo": "https:\/\/moval0x1.github.io\/images\/avatar.png"},"author": {
+                "@type": "Person",
+                "name": "moval0x1"
+            },"description": "Zero2Auto Custom Sample - Part 2"
+    }
+    </script></head>
+    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
+
+        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+    <div class="header-wrapper">
+        <div class="header-title">
+            <a href="/" title="The Reverser&#39;s Draft">The Reverser&#39;s Draft</a>
+        </div>
+        <div class="menu">
+            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+                </a></div>
+        </div>
+    </div>
+</header><header class="mobile" id="header-mobile">
+    <div class="header-container">
+        <div class="header-wrapper">
+            <div class="header-title">
+                <a href="/" title="The Reverser&#39;s Draft">The Reverser&#39;s Draft</a>
+            </div>
+            <div class="menu-toggle" id="menu-toggle-mobile">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
+                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
+            </a></div>
+    </div>
+</header><main class="main">
+                <div class="container"><div class="toc" id="toc-auto">
+            <h2 class="toc-title">Contents</h2>
+            <div class="toc-content" id="toc-content-auto"></div>
+        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Zero 2 Auto Custom sample - Part 2</h1><div class="post-meta">
+            <div class="post-meta-line"><span class="post-author"><a href="https://moval0x1.github.io/" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>moval0x1</a></span>&nbsp;<span class="post-category">included in <a href="/categories/zero2auto/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Zero2Auto</a></span></div>
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2023-11-19">2023-11-19</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1637 words&nbsp;
+                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;8 minutes&nbsp;<span id="/posts/zero2auto-custom-sample-part2/" class="leancloud_visitors" data-flag-title="Zero 2 Auto Custom sample - Part 2">
+                        <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
+                    </span>&nbsp;</div>
+        </div><div class="details toc" id="toc-static"  data-kept="">
+                <div class="details-summary toc-title">
+                    <span>Contents</span>
+                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
+                </div>
+                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#binary-ninja-plugin">Binary Ninja Plugin</a></li>
+    <li><a href="#further-stages">Further Stages</a></li>
+    <li><a href="#the-winner-debugger">The winner debugger</a></li>
+  </ul>
+</nav></div>
+            </div><div class="content" id="content"><h2 id="binary-ninja-plugin">Binary Ninja Plugin</h2>
+<p>To start this second part of the custom sample analysis, I would like to add the script created using <a href="https://binary.ninja/" target="_blank" rel="noopener noreffer ">Binary Ninja</a>. You can find the doc <a href="https://docs.binary.ninja/" target="_blank" rel="noopener noreffer ">here</a>.</p>
+<p>The script is not complex - if you have any suggestions to improve this, please share them with me :) - and it is probably not the fanciest code you have been seeing, but it is something that works, lol. It can be found on my <strong><a href="https://github.com/moval0x1/Zero2Auto/blob/main/zero2auto-custom-sample-decode.py" target="_blank" rel="noopener noreffer ">Github</a></strong> page.</p>
+<p>Here you can see how it works on <a href="https://binary.ninja/" target="_blank" rel="noopener noreffer ">Binary Ninja</a>.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif" title="Decode strings Binja Plugin" data-thumbnail="/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif" data-sub-html="<h2>Decode strings Binja Plugin</h2><p>Decode strings Binja Plugin</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif"
+            data-srcset="/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif, /images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif 1.5x, /images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/BinaryNinja-Zero2Auto-Plugin.gif" width="2480" height="1182" />
+    </a><figcaption class="image-caption">Decode strings Binja Plugin</figcaption>
+    </figure></p>
+<h2 id="further-stages">Further Stages</h2>
+<p>Looking at the strings, I found something that caught my eye; there was a <strong><code>cruloader</code></strong> and it looked weird; maybe the name of this second part? Perhaps it&rsquo;s a joke? Who knows? I&rsquo;m assuming it is a part of the malware and not a joke.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/bn-cruloader.png" title="Cruloader" data-thumbnail="/images/zero2auto/2023-11-19/bn-cruloader.png" data-sub-html="<h2>Cruloader</h2><p>Cruloader</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/bn-cruloader.png"
+            data-srcset="/images/zero2auto/2023-11-19/bn-cruloader.png, /images/zero2auto/2023-11-19/bn-cruloader.png 1.5x, /images/zero2auto/2023-11-19/bn-cruloader.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/bn-cruloader.png" width="699" height="478" />
+    </a><figcaption class="image-caption">Cruloader</figcaption>
+    </figure></p>
+<p>DiE tells us that we are dealing with a <strong><code>C/C++</code></strong> program.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/DiE-cruloader.png" title="DiE" data-thumbnail="/images/zero2auto/2023-11-19/DiE-cruloader.png" data-sub-html="<h2>DiE</h2><p>DiE</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/DiE-cruloader.png"
+            data-srcset="/images/zero2auto/2023-11-19/DiE-cruloader.png, /images/zero2auto/2023-11-19/DiE-cruloader.png 1.5x, /images/zero2auto/2023-11-19/DiE-cruloader.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/DiE-cruloader.png" width="794" height="674" />
+    </a><figcaption class="image-caption">DiE</figcaption>
+    </figure></p>
+<p>Usually, when I have to deal with it, my first step is to go to the <strong><code>main</code></strong> function that usually for <strong><code>C/C++</code></strong> program can be found by three pushes before a call, something like that.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-ASM" data-lang="ASM"><span style="display:flex;"><span><span style="color:#a6e22e">push</span> <span style="color:#66d9ef">something</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">push</span> <span style="color:#66d9ef">something</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">push</span> <span style="color:#66d9ef">something</span>
+</span></span><span style="display:flex;"><span><span style="color:#a6e22e">call</span> <span style="color:#66d9ef">somethingElse</span>
+</span></span></code></pre></div><p>I found the <strong><code>main</code></strong> function, it had an interesting part, and I can tell you why. After the <strong><code>GetModuleFileNameA</code></strong> which is responsible for: <strong>retrieve the fully qualified path for the file that contains the specified module.</strong> and the <strong><code>_strtok</code></strong> that is a kind of <strong>split</strong> function - until now, nothing new, right? - there is a function that compares with a hex value.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/bn-begin-main.png" title="Begin of main" data-thumbnail="/images/zero2auto/2023-11-19/bn-begin-main.png" data-sub-html="<h2>Begin of main</h2><p>Begin of main</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/bn-begin-main.png"
+            data-srcset="/images/zero2auto/2023-11-19/bn-begin-main.png, /images/zero2auto/2023-11-19/bn-begin-main.png 1.5x, /images/zero2auto/2023-11-19/bn-begin-main.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/bn-begin-main.png" width="956" height="631" />
+    </a><figcaption class="image-caption">Begin of main</figcaption>
+    </figure></p>
+<p>Just after going inside this function, we have some values that we can use to search in Google - always a good idea to use Google to bring some insights to us. There are many occurences of the hex value <strong><code>0xedb88320</code></strong> with a <a href="https://www.geeksforgeeks.org/bitwise-operators-in-c-cpp/" target="_blank" rel="noopener noreffer ">XOR</a> operation.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/bn-crc32.png" title="CRC32 function" data-thumbnail="/images/zero2auto/2023-11-19/bn-crc32.png" data-sub-html="<h2>CRC32 function</h2><p>CRC32 function</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/bn-crc32.png"
+            data-srcset="/images/zero2auto/2023-11-19/bn-crc32.png, /images/zero2auto/2023-11-19/bn-crc32.png 1.5x, /images/zero2auto/2023-11-19/bn-crc32.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/bn-crc32.png" width="956" height="666" />
+    </a><figcaption class="image-caption">CRC32 function</figcaption>
+    </figure></p>
+<p>One of the first results brings us the information that this is a <a href="https://lxp32.github.io/docs/a-simple-example-crc32-calculation/" target="_blank" rel="noopener noreffer ">CRC32</a> implementation. To validate it, I will use the HashDB plugin from OALabs implemented on <a href="https://binary.ninja/" target="_blank" rel="noopener noreffer ">Binary Ninja</a> by <a href="https://github.com/cxiao/hashdb_bn" target="_blank" rel="noopener noreffer ">Cindy Xiao</a>, luckily it worked very well! &lt;3. I just renamed this function to <strong><code>mw_crc32</code></strong>. Because it is easier read names than random numbers.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/bn-hashdb-svchost.png" title="HashDB" data-thumbnail="/images/zero2auto/2023-11-19/bn-hashdb-svchost.png" data-sub-html="<h2>HashDB</h2><p>HashDB</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/bn-hashdb-svchost.png"
+            data-srcset="/images/zero2auto/2023-11-19/bn-hashdb-svchost.png, /images/zero2auto/2023-11-19/bn-hashdb-svchost.png 1.5x, /images/zero2auto/2023-11-19/bn-hashdb-svchost.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/bn-hashdb-svchost.png" width="1280" height="330" />
+    </a><figcaption class="image-caption">HashDB</figcaption>
+    </figure></p>
+<blockquote>
+<p><strong>Just a comment here!</strong></p>
+<p>The challenge could be easily resolved using <a href="https://github.com/x64dbg/x64dbg" target="_blank" rel="noopener noreffer ">x64dbg</a>; the goal here is to use <a href="https://binary.ninja/" target="_blank" rel="noopener noreffer ">Binary Ninja</a> to study the tool and also practice some static analysis to collect information as much as possible without debugging it.</p>
+</blockquote>
+<p>This part is so cool when we understand what is going on here. Look, this function resolves most of the content in run time, but it does not mean that we cannot understand the result without debugging it; basically, the malware gets this hex value and performs a loop, as shown on the left side. We can summarize it as:</p>
+<ul>
+<li>Get the char[i].</li>
+<li>Rotate Left char[i] with 4.</li>
+<li>XOR char[i] with 0xC5.</li>
+</ul>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/bn-get-pastebin-url.png" title="Get Pastebin URL" data-thumbnail="/images/zero2auto/2023-11-19/bn-get-pastebin-url.png" data-sub-html="<h2>Get Pastebin URL</h2><p>Get Pastebin URL</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/bn-get-pastebin-url.png"
+            data-srcset="/images/zero2auto/2023-11-19/bn-get-pastebin-url.png, /images/zero2auto/2023-11-19/bn-get-pastebin-url.png 1.5x, /images/zero2auto/2023-11-19/bn-get-pastebin-url.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/bn-get-pastebin-url.png" width="2286" height="525" />
+    </a><figcaption class="image-caption">Get Pastebin URL</figcaption>
+    </figure></p>
+<p>If we perform the same sequence mentioned previously, the magic happens and we get the Pastebin <strong><code>https[:]//pastebin[.]com/raw/mLem9DGk</code></strong>. I just used <a href="https://gchq.github.io/CyberChef/#recipe=From_Hex%28%27Auto%27%29Rotate_left%284,false%29XOR%28%7B%27option%27:%27Hex%27,%27string%27:%27c5%27%7D,%27Standard%27,false%29&amp;input=ZGExYjFiNWI2YmZmYWVhZTViNGE2YjFiMGE3YWNhYmFiZTZhYWE4YWFlN2I0YTJiYWU4YTk4MGE4YWNmMTgyOGVh" target="_blank" rel="noopener noreffer ">CyberChef</a> to help me with that.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/cyberchef-pastebin-url.png" title="CyberChef Pastebin URL" data-thumbnail="/images/zero2auto/2023-11-19/cyberchef-pastebin-url.png" data-sub-html="<h2>CyberChef Pastebin URL</h2><p>CyberChef Pastebin URL</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/cyberchef-pastebin-url.png"
+            data-srcset="/images/zero2auto/2023-11-19/cyberchef-pastebin-url.png, /images/zero2auto/2023-11-19/cyberchef-pastebin-url.png 1.5x, /images/zero2auto/2023-11-19/cyberchef-pastebin-url.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/cyberchef-pastebin-url.png" width="1091" height="472" />
+    </a><figcaption class="image-caption">CyberChef Pastebin URL</figcaption>
+    </figure></p>
+<p>The content of Pastebin will be allocated - according to the APIs called after that. Taking a look at Pastebin, it only has another URL which points to this PNG file <strong><code>https[:]//i[.]ibb[.]co/KsfqHym/PNG-02-Copy[.]png</code></strong>. Nice, no? Unfortunately, no :/ Not everything is a flower in this awesome world of malware analysis. The image is corrupted, and it might be fixed before the &ldquo;execution?&rdquo;. It is my hypothesis.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/img-corrupted.png" title="Corrupted IMG" data-thumbnail="/images/zero2auto/2023-11-19/img-corrupted.png" data-sub-html="<h2>Corrupted IMG</h2><p>Corrupted IMG</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/img-corrupted.png"
+            data-srcset="/images/zero2auto/2023-11-19/img-corrupted.png, /images/zero2auto/2023-11-19/img-corrupted.png 1.5x, /images/zero2auto/2023-11-19/img-corrupted.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/img-corrupted.png" width="917" height="71" />
+    </a><figcaption class="image-caption">Corrupted IMG</figcaption>
+    </figure></p>
+<p>Following taking notes by static analysis, I found good things, and I kind of stayed stuck at some points, but let&rsquo;s keep moving until I got completely stuck. As mentioned before, sometimes I have renamed functions based on voices in my head, lol. To be honest, it is not this but essentially based on what I can understand by the function that I&rsquo;m analyzing. So, after a deep analysis, one of the functions needed to have its name changed. Mainly because I understood that it also decodes the corrupted file, and I will show you that.</p>
+<p>The function named as <strong><code>mw_create_writeFile_temp</code></strong> now is called by <strong><code>mw_decode_create_writeFile_temp</code></strong>. Let&rsquo;s dig into it. I can explain almost the whole function without putting the binary on a debugger, but unfortunately, my static analysis skill is not as sharp as I intend to have it in the future - a short future, I hope. It starts by getting the content from Pastebin, performing one more time the <strong><code>rol 4 &gt; xor 0x1f</code></strong> sequence to decode the string <strong><code>.tuptuo\</code></strong>. This string looks reversed. Am I sure about that? No, yet, but if we reverse, it becomes <strong><code>/output.</code></strong>. After that, it performs another decode sequence - but this time, I cannot understand what the string means. I will see it and the other parts on the debugger; I&rsquo;m just pointing here what I&rsquo;ve found in the static analysis part.</p>
+<p>At the end of performing some operations in a loop, after that, another loop with the <strong>IMG</strong> content <strong><code>XOR 0x61</code></strong>. When it finishes, the malware resolves some injection APIs, such as:</p>
+<ul>
+<li>CreateProcessA</li>
+<li>WriteProcessMemory</li>
+<li>ResumeThread</li>
+<li>VirtualAllocEx</li>
+<li>VirtualAlloc</li>
+<li>CreateRemoteThread</li>
+</ul>
+<p>It looks like the malware will inject one more time content, keeping the analysis; the following function uses the same <strong><code>rol &gt; xor</code></strong> sequence to decode the full path of <a href="https://gchq.github.io/CyberChef/#recipe=From_Hex%28%27Auto%27%29Rotate_left%284,false%29XOR%28%7B%27option%27:%27Hex%27,%27string%27:%27a2%27%7D,%27Standard%27,false%29&amp;input=MWU4OWVmNWZiY2NjNmNkYzVkMWRlZjFmYmQxZDZkN2NmYzE5MDllZjFkNGQxY2FjZGMxZDZkYzg3Y2FkN2M" target="_blank" rel="noopener noreffer ">svchost</a> <strong><code>C:\Windows\System32\svchost.exe</code></strong> and, at the end of this function, the last function is in charge of a Process Hollowing. How do I know that without debugging? Based on the APIs called, google is always my good friend, and it helped me find, for instance, this <a href="https://github.com/m0n0ph1/Process-Hollowing" target="_blank" rel="noopener noreffer ">github</a> with a very close code as I found in the last function.</p>
+<p>So far, so good. Now, let me validate all my hypotheses.</p>
+<h2 id="the-winner-debugger">The winner debugger</h2>
+<p>As I started debugging, I just figured out that I forgot to see and renamed some functions, such as the first <strong><code>IsDebuggerPresent</code></strong> and the most important one, that is the <strong><code>CreateToolhelp32Snapshot</code></strong>. According to MSDN, this API <strong>takes a snapshot of the specified processes, as well as the heaps, modules, and threads used by these processes.</strong></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>HANDLE <span style="color:#a6e22e">CreateToolhelp32Snapshot</span>(
+</span></span><span style="display:flex;"><span>  [in] DWORD dwFlags,
+</span></span><span style="display:flex;"><span>  [in] DWORD th32ProcessID
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>It will take a &ldquo;photo&rdquo; of the process list and loop through it searching for something, in our case, something hashed by CRC32. I could easily bypass this function result by changing the Zero Flag or the Jump below the comparison, but I&rsquo;m here to learn more and dig deep into the challenge. Let&rsquo;s debug it! :)</p>
+<p>I found that when it compares <strong><code>EAX</code></strong> with <strong><code>0x7C6FFE70</code></strong> it returns the wrong result, so let me identify what this value is - I know that it uses a CRC32 implementation, and I will use it to my advantage.</p>
+<p>As it spends some time in the loop, I will use a <a href="https://help.x64dbg.com/en/latest/introduction/ConditionalBreakpoint.html" target="_blank" rel="noopener noreffer ">Conditional BreakPoint</a> to only break when it is <strong><code>explorer.exe</code></strong> because malware authors, usually use this function to validate the processes running to close an analysis application or close the process itself if find any weird stuff, I will start there, I would not spend too much time on this loop, to be honest.</p>
+<p>I just added this beautiful line <strong><code>strstr(utf16(ESI), &quot;explorer.exe&quot;)</code></strong> on this line and executed my program. Easy no?</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-conditional-bp.png" title="Conditional BreakPoint" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-conditional-bp.png" data-sub-html="<h2>Conditional BreakPoint</h2><p>Conditional BreakPoint</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-conditional-bp.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-conditional-bp.png, /images/zero2auto/2023-11-19/x64dbg-conditional-bp.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-conditional-bp.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-conditional-bp.png" width="571" height="289" />
+    </a><figcaption class="image-caption">Conditional BreakPoint</figcaption>
+    </figure></p>
+<p>And it worked!</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png" title="BreakPoint on explorer.exe" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png" data-sub-html="<h2>BreakPoint on explorer.exe</h2><p>BreakPoint on explorer.exe</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png, /images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-bp-explorer-exe.png" width="1725" height="83" />
+    </a><figcaption class="image-caption">BreakPoint on explorer.exe</figcaption>
+    </figure></p>
+<p>I got two programs that I opened to analyze the binary, and both of them were searched by the malware; one of them was <strong><code>ProceessHacker.exe</code></strong> with the hash <strong><code>0x7C6FFE70</code></strong>.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-processHacker.png" title="ProcessHacker x64dbg" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-processHacker.png" data-sub-html="<h2>ProcessHacker x64dbg</h2><p>ProcessHacker x64dbg</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-processHacker.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-processHacker.png, /images/zero2auto/2023-11-19/x64dbg-processHacker.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-processHacker.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-processHacker.png" width="504" height="167" />
+    </a><figcaption class="image-caption">ProcessHacker x64dbg</figcaption>
+    </figure></p>
+<p>After closes them I got <strong><code>x32dbg.exe</code></strong> with the hash <strong><code>0xD2F05B7D</code></strong>.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png" title="x32dbg process" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png" data-sub-html="<h2>x32dbg process</h2><p>x32dbg process</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png, /images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-x32dbg-process.png" width="505" height="168" />
+    </a><figcaption class="image-caption">x32dbg process</figcaption>
+    </figure></p>
+<p>As I changed the name of my debugger to <strong><code>moval0x1.exe</code></strong> I was able to continue without further problems. I have to admit that some tasks are easier with debugger than just open in a disassembly and try to understand without dynamicaly run.</p>
+<p>The malware download the <strong><code>.PNG</code></strong> file, get the size using <strong><code>HttpQueryInfoA</code></strong> with <strong><code>dwInfoLevel</code></strong> being passed 5, which means <strong><code>HTTP_QUERY_CONTENT_LENGTH</code></strong>.</p>
+<blockquote>
+<p>Retrieves the size of the resource, in bytes.</p>
+</blockquote>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-output-jpg.png" title="output.jpg" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-output-jpg.png" data-sub-html="<h2>output.jpg</h2><p>output.jpg</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-output-jpg.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-output-jpg.png, /images/zero2auto/2023-11-19/x64dbg-output-jpg.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-output-jpg.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-output-jpg.png" width="522" height="168" />
+    </a><figcaption class="image-caption">output.jpg</figcaption>
+    </figure></p>
+<p>I saw the <strong>cruloader</strong> string, but I didn&rsquo;t catch the idea behind it debugging. I got that it concat with the temp folder to save the output; it also uses <a href="https://isc.sans.edu/diary/Stackstrings&#43;type&#43;2/26192/" target="_blank" rel="noopener noreffer ">stackstring</a> to disrupt our analysis.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png" title="Create file" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png" data-sub-html="<h2>Create file</h2><p>Create file</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png, /images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-cruloader-temp-folder.png" width="2343" height="78" />
+    </a><figcaption class="image-caption">Create file</figcaption>
+    </figure></p>
+<p>The magic of learning and reading about APIs, after the folder has been created, we have a <strong><code>WriteFile</code></strong> telling us everything we need to know.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C" data-lang="C"><span style="display:flex;"><span>BOOL <span style="color:#a6e22e">WriteFile</span>(
+</span></span><span style="display:flex;"><span>  [in]                HANDLE       hFile,
+</span></span><span style="display:flex;"><span>  [in]                LPCVOID      lpBuffer,
+</span></span><span style="display:flex;"><span>  [in]                DWORD        nNumberOfBytesToWrite,
+</span></span><span style="display:flex;"><span>  [out, optional]     LPDWORD      lpNumberOfBytesWritten,
+</span></span><span style="display:flex;"><span>  [in, out, optional] LPOVERLAPPED lpOverlapped
+</span></span><span style="display:flex;"><span>);
+</span></span></code></pre></div><p>Based on that, we can see that the handle is <strong><code>0x470</code></strong>, the content to be written is at the address <strong><code>0x03740000</code></strong>, and the length is <strong><code>0x435B8</code></strong>. It means that the entire file will be written on disk.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/x64dbg-writefile.png" title="WriteFile API" data-thumbnail="/images/zero2auto/2023-11-19/x64dbg-writefile.png" data-sub-html="<h2>WriteFile API</h2><p>WriteFile API</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/x64dbg-writefile.png"
+            data-srcset="/images/zero2auto/2023-11-19/x64dbg-writefile.png, /images/zero2auto/2023-11-19/x64dbg-writefile.png 1.5x, /images/zero2auto/2023-11-19/x64dbg-writefile.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/x64dbg-writefile.png" width="1540" height="202" />
+    </a><figcaption class="image-caption">WriteFile API</figcaption>
+    </figure></p>
+<p>And one more time it gets a reverse string, <strong><code>redaolurc</code></strong> that is the same <strong><code>cruloader</code></strong> and it is find inside the <strong><code>.PNG</code></strong> as we can see below.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/wxHex-PNG.png" title="wxHexEditor" data-thumbnail="/images/zero2auto/2023-11-19/wxHex-PNG.png" data-sub-html="<h2>wxHexEditor</h2><p>wxHexEditor</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/wxHex-PNG.png"
+            data-srcset="/images/zero2auto/2023-11-19/wxHex-PNG.png, /images/zero2auto/2023-11-19/wxHex-PNG.png 1.5x, /images/zero2auto/2023-11-19/wxHex-PNG.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/wxHex-PNG.png" width="1543" height="775" />
+    </a><figcaption class="image-caption">wxHexEditor</figcaption>
+    </figure></p>
+<p>Ok, but, why this information is useful? That&rsquo;s a good question! The answer is some lines below. The malware reads the content of the <strong><code>.PNG</code></strong> search for the reverse <strong>cruloader</strong> string and everything after that should be <strong><code>XORed</code></strong> with <strong><code>0x61</code></strong>, the image is a Zero2Auto logo and it was used to deceive the first seen of the file. We can see in the image below that it kind of worked.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/fi-xored-png.png" title="XORed PNG" data-thumbnail="/images/zero2auto/2023-11-19/fi-xored-png.png" data-sub-html="<h2>XORed PNG</h2><p>XORed PNG</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/fi-xored-png.png"
+            data-srcset="/images/zero2auto/2023-11-19/fi-xored-png.png, /images/zero2auto/2023-11-19/fi-xored-png.png 1.5x, /images/zero2auto/2023-11-19/fi-xored-png.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/fi-xored-png.png" width="1026" height="411" />
+    </a><figcaption class="image-caption">XORed PNG</figcaption>
+    </figure></p>
+<p>After that, we know that the Process Hollowing is coming. Probably I missed something because the binary showed me some congratulations strings but didn&rsquo;t run - maybe my &ldquo;smart&rdquo; moment in just trying to perform the <strong><code>XOR</code></strong> was not enough. To finish it, taking a look at the renamed function <strong><code>mw_processHollowing</code></strong> I just passed all steps as I did previously, and before the malware <strong><code>ResumeThread</code></strong> I dumped the injected file on <strong><code>svchost.txt</code></strong> and fixed the imports - by the way, there was an organized mess :D</p>
+<p>And finally, there is this beautiful message here!</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2023-11-19/cruloader-messagebox.png" title="Cruloader MessageBox" data-thumbnail="/images/zero2auto/2023-11-19/cruloader-messagebox.png" data-sub-html="<h2>Cruloader MessageBox</h2><p>Cruloader MessageBox</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/zero2auto/2023-11-19/cruloader-messagebox.png"
+            data-srcset="/images/zero2auto/2023-11-19/cruloader-messagebox.png, /images/zero2auto/2023-11-19/cruloader-messagebox.png 1.5x, /images/zero2auto/2023-11-19/cruloader-messagebox.png 2x"
+            data-sizes="auto"
+            alt="/images/zero2auto/2023-11-19/cruloader-messagebox.png" width="618" height="187" />
+    </a><figcaption class="image-caption">Cruloader MessageBox</figcaption>
+    </figure></p>
+<p>Thank you for reading! It was a really fun challenge.</p>
+</div><div class="post-footer" id="post-footer">
+    <div class="post-info">
+        <div class="post-info-line">
+            <div class="post-info-mod">
+                <span>Updated on 2023-11-19</span>
+            </div></div>
+        <div class="post-info-line">
+            <div class="post-info-md"></div>
+            <div class="post-info-share">
+                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/" data-title="Zero 2 Auto Custom sample - Part 2" data-via="moval0x1" data-hashtags="Zero2Auto,Malware,Reversing"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/" data-hashtag="Zero2Auto"><i class="fab fa-facebook-square fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/" data-title="Zero 2 Auto Custom sample - Part 2"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a></span>
+            </div>
+        </div>
+    </div>
+
+    <div class="post-info-more">
+        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/zero2auto/">Zero2Auto</a>,&nbsp;<a href="/tags/malware/">Malware</a>,&nbsp;<a href="/tags/reversing/">Reversing</a></section>
+        <section>
+            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav"><a href="/posts/zero2auto-custom-sample-part1/" class="prev" rel="prev" title="Zero 2 Auto Custom sample - Part 1"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Zero 2 Auto Custom sample - Part 1</a>
+            <a href="/posts/qakbot-analysis/" class="next" rel="next" title="Qakbot Analysis">Qakbot Analysis<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+</div>
+<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
+            </noscript><div id="valine" class="comment"></div><noscript>
+                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
+            </noscript></div></article></div>
+            </main><footer class="footer">
+        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.121.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
+                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2019 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
+        </div>
+    </footer></div>
+
+        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
+                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
+            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
+                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
+            </a>
+        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/css/lightgallery-bundle.min.css"><script type="text/javascript" src="https://.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.5.0/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/thumbnail/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/zoom/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightgallery":true};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+</html>
