@@ -14,19 +14,19 @@ Loader When I got this sample, the first thing that caught my eye was the lack o
 </item>
 <item>
     <title>Zero 2 Auto Custom sample - Part 2</title>
-    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/</link>
+    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part-2/</link>
     <pubDate>Sun, 19 Nov 2023 21:03:36 &#43;0800</pubDate>
     <author>moval0x1</author>
-    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part2/</guid>
+    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part-2/</guid>
     <description><![CDATA[Binary Ninja Plugin To start this second part of the custom sample analysis, I would like to add the script created using Binary Ninja. You can find the doc here.
 The script is not complex - if you have any suggestions to improve this, please share them with me :) - and it is probably not the fanciest code you have been seeing, but it is something that works, lol. It can be found on my Github page.]]></description>
 </item>
 <item>
     <title>Zero 2 Auto Custom sample - Part 1</title>
-    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part1/</link>
+    <link>https://moval0x1.github.io/posts/zero2auto-custom-sample-part-1/</link>
     <pubDate>Tue, 31 Oct 2023 21:03:36 &#43;0800</pubDate>
     <author>moval0x1</author>
-    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part1/</guid>
+    <guid>https://moval0x1.github.io/posts/zero2auto-custom-sample-part-1/</guid>
     <description><![CDATA[The IR Case Hi there,
 During an ongoing investigation, one of our IR team members managed to locate an unknown sample on an infected machine belonging to one of our clients. We cannot pass that sample onto you currently as we are still analyzing it to determine what data was exfilatrated. However, one of our backend analysts developed a YARA rule based on the malware packer, and we were able to locate a similar binary that seemed to be an earlier version of the sample we&rsquo;re dealing with.]]></description>
 </item>
