@@ -1,0 +1,242 @@
+<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
+    <channel>
+        <title>Reversing - Category - The Reverser&#39;s Draft</title>
+        <link>https://moval0x1.github.io/categories/reversing/</link>
+        <description>Reversing - Category - The Reverser&#39;s Draft</description>
+        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 26 Jun 2024 18:20:43 -0300</lastBuildDate><atom:link href="https://moval0x1.github.io/categories/reversing/" rel="self" type="application/rss+xml" /><item>
+    <title>The Abuse of Exception Handlers</title>
+    <link>https://moval0x1.github.io/posts/the-abuse-of-exception-handlers/</link>
+    <pubDate>Wed, 26 Jun 2024 18:20:43 -0300</pubDate>
+    <author>moval0x1</author>
+    <guid>https://moval0x1.github.io/posts/the-abuse-of-exception-handlers/</guid>
+    <description><![CDATA[<h2 id="the-definition">The Definition</h2>
+<p>Everyone interested in programming probably has run into the too-famous &ldquo;try-catch&rdquo; thing. It is not something new. So, it is basically what we will talk about today. I used to say that it is always good to understand what happens behind the scenes; I mean, speaking about try-catch, it is nothing mysterious; it is kind of easy and simple to understand. But most of the time, we are talking about the surface of this, we are not digging into the details. If you would like to get the &ldquo;core&rdquo; of details, it is time to stop being only on the surface of this and take a look at the structure behind it. To start, let&rsquo;s define what it <em>Exception Handling</em>.</p>
+<blockquote>
+<p><em>The <a href="https://en.wikipedia.org/wiki/Exception_handling" target="_blank" rel="noopener noreffer "><strong>definition</strong></a> of an exception is based on the observation that each procedure has a precondition, a set of circumstances for which it will terminate &ldquo;normally&rdquo;.<a href="https://en.wikipedia.org/wiki/Exception_handling#cite_note-Cristian-1" target="_blank" rel="noopener noreffer ">¹</a> An exception handling mechanism allows the procedure to raise an exception<a href="https://en.wikipedia.org/wiki/Exception_handling#cite_note-FOOTNOTEGoodenough1975b683%E2%80%93684-2" target="_blank" rel="noopener noreffer ">²</a> if this precondition is violated,<a href="https://en.wikipedia.org/wiki/Exception_handling#cite_note-Cristian-1" target="_blank" rel="noopener noreffer ">¹</a> for example if the procedure has been called on an abnormal set of arguments. The exception handling mechanism then handles the exception.<a href="https://en.wikipedia.org/wiki/Exception_handling#cite_note-FOOTNOTEGoodenough1975b684-3" target="_blank" rel="noopener noreffer ">³</a></em></p>
+</blockquote>
+<h2 id="what-is-seh-structured-exception-handler-">What is SEH (Structured Exception Handler) ?</h2>
+<p>Structured Exception Handling <strong>(SEH)</strong> is a mechanism in Windows operating systems that handles exceptions, such as errors or unexpected events, that occur during the execution of a program. <strong>SEH</strong> allows a program to respond to these exceptions in a controlled manner, ensuring that the system remains stable and providing a way to handle errors gracefully.</p>
+<p>According to <a href="https://learn.microsoft.com/en-us/cpp/cpp/structured-exception-handling-c-cpp?view=msvc-170#remarks" target="_blank" rel="noopener noreffer "><strong>Microsoft</strong></a>, with <strong>SEH</strong>, you can ensure that resources, such as memory blocks and files, get released correctly if execution unexpectedly terminates. You can also handle specific problems—for example, insufficient memory—by using concise structured code that doesn&rsquo;t rely on goto statements or elaborate testing of return codes.</p>
+<p>As mentioned, <strong>SEH</strong> functions manage exceptions in a program but it can be exploited by <strong>malware</strong> to <em>deceive disassemblers</em> and <em>complicate code analysis</em>. One technique uses the <em>FS segment</em> register to access the Thread Environment Block <strong>(TEB)</strong>, which contains a pointer to the <strong>SEH</strong> chain. The <strong>SEH</strong> chain functions like a stack, with the most recently added function executing during an exception. By manipulating this chain, malware authors can obfuscate their code, making it <strong>difficult</strong> for analysts to identify and <strong>understand malicious behavior</strong>.</p>
+<h2 id="a-glance-example-of-seh">A glance example of SEH</h2>
+<p>We can see how it works by getting this simple example, compiling it, and looking at IDA and x64dbg.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">myFunction</span>() {
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">__try</span> {
+</span></span><span style="display:flex;"><span>        <span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> p <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>; 
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">__except</span> (EXCEPTION_EXECUTE_HANDLER) {
+</span></span><span style="display:flex;"><span>        printf(<span style="color:#e6db74">&#34;An exception occurred!</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>    }
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>    myFunction();
+</span></span><span style="display:flex;"><span>    <span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>The graph view of IDA.</p>
+<p><figure><a class="lightgallery" href="/images/exceptionHandlers/ida-seh-graph.png" title="IDA SEH Graph" data-thumbnail="/images/exceptionHandlers/ida-seh-graph.png" data-sub-html="<h2>IDA SEH Graph</h2><p>IDA SEH Graph</p>">
+        
+    </a><figcaption class="image-caption">IDA SEH Graph</figcaption>
+    </figure></p>
+<p>The x64dbg view.</p>
+<p><figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-seh-disassembly.png" title="x64dbg SEH disassembly" data-thumbnail="/images/exceptionHandlers/x64dbg-seh-disassembly.png" data-sub-html="<h2>x64dbg SEH disassembly</h2><p>x64dbg SEH disassembly</p>">
+        
+    </a><figcaption class="image-caption">x64dbg SEH disassembly</figcaption>
+    </figure></p>
+<h2 id="a-malware-approach-to-seh">A Malware Approach to SEH</h2>
+<p>This code below was created to show a way to make a simple custom exception and abuse the SEH if a debugger was detected (another straightforward trick, ya?). Looking at it with our reversing tools, we can see that magic happens. Even in the future, if you need to deal with an obfuscated or packed code, You will for sure remember the basics that you saw here :D</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;Windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">// Function to be executed after the exception
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">RedirectedExecution</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">[x] Executed after the exception</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>LONG WINAPI <span style="color:#a6e22e">CustomExceptionHandler</span>(PEXCEPTION_POINTERS pExceptionInfo)
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;[x] Custom exception handler executed. Exception code: 0x%X</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, pExceptionInfo<span style="color:#f92672">-&gt;</span>ExceptionRecord<span style="color:#f92672">-&gt;</span>ExceptionCode);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Modify the instruction pointer (EIP) to jump to the redirected execution
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	pExceptionInfo<span style="color:#f92672">-&gt;</span>ContextRecord<span style="color:#f92672">-&gt;</span>Eip <span style="color:#f92672">=</span> (DWORD_PTR)RedirectedExecution;
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> EXCEPTION_CONTINUE_EXECUTION;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">void</span> <span style="color:#a6e22e">CheckDebuggerAndTriggerException</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (IsDebuggerPresent())
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">__try</span>
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			<span style="color:#75715e">// Cause an exception to occur (divide by zero)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>			<span style="color:#66d9ef">int</span> zero <span style="color:#f92672">=</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>			<span style="color:#66d9ef">int</span> result <span style="color:#f92672">=</span> <span style="color:#ae81ff">1</span> <span style="color:#f92672">/</span> zero;
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">__except</span> (CustomExceptionHandler(GetExceptionInformation()))
+</span></span><span style="display:flex;"><span>		{
+</span></span><span style="display:flex;"><span>			printf(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">[-] Divide by Zero Exception handled by the __except block.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>		}
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">else</span>
+</span></span><span style="display:flex;"><span>	{
+</span></span><span style="display:flex;"><span>		printf(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">[+] No debugger detected. Normal execution continues.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>()
+</span></span><span style="display:flex;"><span>{
+</span></span><span style="display:flex;"><span>	CheckDebuggerAndTriggerException();
+</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;[+] Program executed successfully.</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In the code above we are using the <a href="https://learn.microsoft.com/en-us/windows/win32/debug/getexceptioninformation" target="_blank" rel="noopener noreffer "><strong>GetExceptionInformation</strong></a>, which provides the function with the exception information structure, allowing it to both read and modify the details.</p>
+<h2 id="what-is-addvectoredexceptionhandler">What is AddVectoredExceptionHandler?</h2>
+<blockquote>
+<p><a href="https://learn.microsoft.com/en-us/windows/win32/debug/vectored-exception-handling" target="_blank" rel="noopener noreffer "><strong>Vectored exception handlers</strong></a> are an <strong>extension</strong> to <em>structured exception handling</em>. An application can register a function to watch or handle all exceptions for the application. Vectored handlers are not frame-based, therefore, you can add a handler that will be called regardless of where you are in a call frame. Vectored handlers are called in the order that they were added, after the debugger gets a first chance notification, but before the system begins unwinding the stack.</p>
+</blockquote>
+<h3 id="so-what-is-the-difference">So, what is the difference?</h3>
+<p><strong>Structured exception handling (SEH</strong>) and <strong>Vectored Exception Handling (VEH)</strong> are both mechanisms in Windows for handling exceptions, but they serve different purposes:</p>
+<ul>
+<li>
+<p><strong>SEH</strong>:</p>
+<ul>
+<li>It is a Microsoft extension to C and C++ that allows graceful handling of exceptional situations, such as hardware faults.</li>
+<li>It provides complete control over exception handling and is usable across all programming languages and machines.</li>
+<li>It is typed, meaning different exception types can be caught and handled differently.</li>
+<li>It uses stack unwinding to properly handle both user exceptions (C++ exceptions) and OS exceptions.</li>
+<li>It has <strong>&ldquo;first-chance&rdquo;</strong> handling, allowing you to log or handle exceptions before unwinding destroys local variables.</li>
+<li>SEH is recommended for specific scenarios where fine-grained control is needed.</li>
+</ul>
+</li>
+<li>
+<p><strong>VEH</strong>:</p>
+<ul>
+<li>It is an extension to SEH introduced in Windows XP.</li>
+<li>It allows an application to register a function to watch or handle all exceptions for the entire application.</li>
+<li>Unlike SEH, VEH handlers are <strong>not</strong> <em>frame-based</em>, so they can be called regardless of the call frame.</li>
+<li>VEH handlers have <strong>priority</strong> over SEH handlers.</li>
+<li>VEH is useful for scenarios where you need to intercept exceptions globally, such as debugging or logging purposes.</li>
+</ul>
+</li>
+</ul>
+<p>In summary, <strong>SEH</strong> provides fine-grained control over exception handling, while <strong>VEH</strong> allows global exception monitoring. <em>&ldquo;It is neither better nor worst, it is just different&rdquo;</em>. (MC Marcinho - <a href="https://youtu.be/hKbcorS8deY?si=i3OL2RKA_rP_27Vo" target="_blank" rel="noopener noreffer ">Nem Melhor Nem Pior</a>)</p>
+<h2 id="abusing-addvectoredexceptionhandler">Abusing AddVectoredExceptionHandler</h2>
+<h3 id="the-beginning">The beginning</h3>
+<p><figure><a class="lightgallery" href="/images/exceptionHandlers/img-gandalf.png" title="Gandalf" data-thumbnail="/images/exceptionHandlers/img-gandalf.png" data-sub-html="<h2>Gandalf</h2><p>Gandalf</p>">
+        
+    </a><figcaption class="image-caption">Gandalf</figcaption>
+    </figure></p>
+<p>Let&rsquo;s start with some malware that abuses the <strong>VEH</strong>.</p>
+<ul>
+<li><a href="https://securityscorecard.com/research/deep-dive-into-alphv-blackcat-ransomware/" target="_blank" rel="noopener noreffer ">ALPHV/BlackCat Ransomware</a></li>
+<li><a href="https://unit42.paloaltonetworks.com/guloader-variant-anti-analysis/" target="_blank" rel="noopener noreffer ">Guloader</a></li>
+<li><a href="https://unit42.paloaltonetworks.com/excel-add-ins-dridex-infection-chain/" target="_blank" rel="noopener noreffer ">Dridex</a></li>
+</ul>
+<p>How can it be abused? Let&rsquo;s take a simple example here and look inside the debugger.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-C++" data-lang="C++"><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;Windows.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">#include</span> <span style="color:#75715e">&lt;stdio.h&gt;</span><span style="color:#75715e">
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span>LPVOID allocateMemory <span style="color:#f92672">=</span> NULL;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">unsigned</span> <span style="color:#66d9ef">char</span> shellCode[] <span style="color:#f92672">=</span> {
+</span></span><span style="display:flex;"><span>	<span style="color:#ae81ff">0x90</span>,							<span style="color:#75715e">// nop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#ae81ff">0xB0</span>, <span style="color:#ae81ff">0x01</span>,						<span style="color:#75715e">// mov al, 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#ae81ff">0xC3</span>							<span style="color:#75715e">// ret
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>};
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>ULONG <span style="color:#a6e22e">Handler</span>(PEXCEPTION_POINTERS exception_ptr) {
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">if</span> (exception_ptr<span style="color:#f92672">-&gt;</span>ExceptionRecord<span style="color:#f92672">-&gt;</span>ExceptionCode <span style="color:#f92672">==</span> EXCEPTION_ACCESS_VIOLATION) {
+</span></span><span style="display:flex;"><span>		
+</span></span><span style="display:flex;"><span>		printf(<span style="color:#e6db74">&#34;</span><span style="color:#ae81ff">\t</span><span style="color:#e6db74">[-] EXCEPTION_ACCESS_VIOLATION</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// Set new EIP
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		exception_ptr<span style="color:#f92672">-&gt;</span>ContextRecord<span style="color:#f92672">-&gt;</span>Eip <span style="color:#f92672">=</span> (DWORD)allocateMemory;
+</span></span><span style="display:flex;"><span>		<span style="color:#75715e">// Enables single-step mode for the processor. 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">// In single-step mode, the processor generates a debug exception 
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		<span style="color:#75715e">// (INT 1) after executing each instruction.
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>		exception_ptr<span style="color:#f92672">-&gt;</span>ContextRecord<span style="color:#f92672">-&gt;</span>EFlags <span style="color:#f92672">|=</span> <span style="color:#ae81ff">0x100</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">return</span> EXCEPTION_CONTINUE_EXECUTION;
+</span></span><span style="display:flex;"><span>	}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> EXCEPTION_CONTINUE_SEARCH;
+</span></span><span style="display:flex;"><span>}
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">int</span> <span style="color:#a6e22e">main</span>() {
+</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;[+] Starting VEH example...</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>);
+</span></span><span style="display:flex;"><span>	allocateMemory <span style="color:#f92672">=</span> <span style="color:#f92672">::</span>VirtualAlloc(
+</span></span><span style="display:flex;"><span>		NULL, 
+</span></span><span style="display:flex;"><span>		<span style="color:#66d9ef">sizeof</span>(shellCode), 
+</span></span><span style="display:flex;"><span>		MEM_COMMIT <span style="color:#f92672">|</span> MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+</span></span><span style="display:flex;"><span>		
+</span></span><span style="display:flex;"><span>	memcpy_s(allocateMemory, <span style="color:#66d9ef">sizeof</span>(shellCode), shellCode, <span style="color:#66d9ef">sizeof</span>(shellCode));
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Add the handler
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#f92672">::</span>AddVectoredExceptionHandler(TRUE, (PVECTORED_EXCEPTION_HANDLER)Handler);
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Access Violation
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	<span style="color:#66d9ef">int</span><span style="color:#f92672">*</span> p <span style="color:#f92672">=</span> <span style="color:#66d9ef">nullptr</span>;
+</span></span><span style="display:flex;"><span>	<span style="color:#f92672">*</span>p <span style="color:#f92672">=</span> <span style="color:#ae81ff">42</span>;
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>	<span style="color:#66d9ef">return</span> <span style="color:#ae81ff">0</span>;
+</span></span><span style="display:flex;"><span>}
+</span></span></code></pre></div><p>In the code above, the dereferencing the null pointer will cause an <strong>ACCESS_VIOLATION</strong> which should be caught by our <em>VEH</em>. When you call the <strong><a href="https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-addvectoredexceptionhandler" target="_blank" rel="noopener noreffer ">AddVectoredExceptionHandler</a></strong>, you need two parameters.</p>
+<pre tabindex="0"><code>PVOID AddVectoredExceptionHandler(
+  ULONG                       First,
+  PVECTORED_EXCEPTION_HANDLER Handler
+);
+</code></pre><p>As in the example above, the Handler type is a <strong><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/nc-winnt-pvectored_exception_handler" target="_blank" rel="noopener noreffer ">PVECTORED_EXCEPTION_HANDLER</a></strong></p>
+<pre tabindex="0"><code>PVECTORED_EXCEPTION_HANDLER PvectoredExceptionHandler;
+
+LONG PvectoredExceptionHandler(
+ [in] _EXCEPTION_POINTERS *ExceptionInfo
+)
+{...}
+</code></pre><p>It is a pointer to <strong><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_pointers" target="_blank" rel="noopener noreffer ">EXCEPTION_POINTERS</a></strong> structure which contains the <strong><a href="https://learn.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-exception_record" target="_blank" rel="noopener noreffer ">ExceptionRecord</a></strong> and <strong><a href="https://learn.microsoft.com/en-us/windows/desktop/api/winnt/ns-winnt-context" target="_blank" rel="noopener noreffer ">ContextRecord</a></strong>.</p>
+<pre tabindex="0"><code>typedef struct _EXCEPTION_POINTERS {
+  PEXCEPTION_RECORD ExceptionRecord;
+  PCONTEXT          ContextRecord;
+} EXCEPTION_POINTERS, *PEXCEPTION_POINTERS;
+</code></pre><p>Now we have all the intrinsic details about it, and we can understand what goes within the <strong>Handler</strong> function. I&rsquo;m forcing an <strong>ACCESS_VIOLATION</strong> and using my <em>Handler</em> to take care of it; if it is the expected exception, I will change the <strong>EIP</strong> to my shellcode.</p>
+<h3 id="the-debugger-view">The Debugger View</h3>
+<p>The address of the shellcode in memory and in sequence the <strong>AddVectoredExceptionHandler</strong> function with the renamed <strong>veh_fn_handler</strong>
+</p>
+<p>When we arrive at the point where the null pointer would receive a value, we get the exception.
+</p>
+<p>After that, pressing <strong>F9</strong> will reach our breakpoint on the <strong>veh_fn_handler</strong> and once more pressing <strong>F9</strong> we arrive at our <em>shellcode</em> by the <strong>EXCEPTION_SINGLE_STEP</strong>.</p>
+<p></p>
+<p>And finally :D
+</p>
+<h2 id="conclusion">Conclusion</h2>
+<p>The idea behind this post was to show a different approach used by some malware families to achieve their goals in a way that requires the analyst to spend some time flowing through the code to understand what is happening. With these simple examples, anyone interested in this can compile the code and take a look at the debugger and disassembler.</p>
+<p>Reversing is mostly a case of practice! Do and repeat the process as much as you can until it starts to make sense.</p>
+<p>I hope this post has been informative and useful to you. If you have any questions, doubts, or want to help me correct any mistakes, please feel free to contact me.</p>
+<h2 id="references">References</h2>
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Exception_handling" target="_blank" rel="noopener noreffer ">https://en.wikipedia.org/wiki/Exception_handling</a></li>
+<li><a href="https://learn.microsoft.com/en-us/cpp/cpp/structured-exception-handling-c-cpp?view=msvc-170#remarks" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/cpp/cpp/structured-exception-handling-c-cpp?view=msvc-170#remarks</a></li>
+<li><a href="https://bytepointer.com/resources/pietrek_crash_course_depths_of_win32_seh.htm" target="_blank" rel="noopener noreffer ">https://bytepointer.com/resources/pietrek_crash_course_depths_of_win32_seh.htm</a></li>
+<li><a href="https://unprotect.it/technique/misusing-structured-exception-handlers/" target="_blank" rel="noopener noreffer ">https://unprotect.it/technique/misusing-structured-exception-handlers/</a></li>
+<li><a href="https://1malware1.medium.com/anti-disassembly-techniques-e012338f2ae0" target="_blank" rel="noopener noreffer ">https://1malware1.medium.com/anti-disassembly-techniques-e012338f2ae0</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/debug/getexceptioninformation" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/debug/getexceptioninformation</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/debug/vectored-exception-handling" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/debug/vectored-exception-handling</a></li>
+<li><a href="https://unprotect.it/technique/addvectoredexceptionhandler/" target="_blank" rel="noopener noreffer ">https://unprotect.it/technique/addvectoredexceptionhandler/</a></li>
+<li><a href="https://securityscorecard.com/research/deep-dive-into-alphv-blackcat-ransomware/" target="_blank" rel="noopener noreffer ">https://securityscorecard.com/research/deep-dive-into-alphv-blackcat-ransomware/</a></li>
+<li><a href="https://research.nccgroup.com/2022/03/01/detecting-anomalous-vectored-exception-handlers-on-windows/" target="_blank" rel="noopener noreffer ">https://research.nccgroup.com/2022/03/01/detecting-anomalous-vectored-exception-handlers-on-windows/</a></li>
+<li><a href="https://unit42.paloaltonetworks.com/guloader-variant-anti-analysis/" target="_blank" rel="noopener noreffer ">https://unit42.paloaltonetworks.com/guloader-variant-anti-analysis/</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-addvectoredexceptionhandler" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/api/errhandlingapi/nf-errhandlingapi-addvectoredexceptionhandler</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/nc-winnt-pvectored_exception_handler" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/api/winnt/nc-winnt-pvectored_exception_handler</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_pointers" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_pointers</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_record" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-exception_record</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-context" target="_blank" rel="noopener noreffer ">https://learn.microsoft.com/en-us/windows/win32/api/winnt/ns-winnt-context</a></li>
+</ul>
+]]></description>
+</item>
+</channel>
+</rss>
