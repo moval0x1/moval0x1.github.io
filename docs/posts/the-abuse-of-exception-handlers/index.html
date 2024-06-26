@@ -33,7 +33,7 @@
                             "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
                             "width":  457 ,
                             "height":  457 
-                        }],"genre": "posts","keywords": "Malware, Reversing","wordcount":  1453 ,
+                        }],"genre": "posts","keywords": "Malware, Reversing","wordcount":  1449 ,
         "url": "https:\/\/moval0x1.github.io\/posts\/the-abuse-of-exception-handlers\/","datePublished": "2024-06-26T18:20:43-03:00","dateModified": "2024-06-26T18:20:43-03:00","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": "https:\/\/moval0x1.github.io\/images\/avatar.png"},"author": {
@@ -75,7 +75,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">The Abuse of Exception Handlers</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://moval0x1.github.io/" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>moval0x1</a></span>&nbsp;<span class="post-category">included in <a href="/categories/reversing/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Reversing</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-06-26">2024-06-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1453 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-06-26">2024-06-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1449 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;7 minutes&nbsp;<span id="/posts/the-abuse-of-exception-handlers/" class="leancloud_visitors" data-flag-title="The Abuse of Exception Handlers">
                         <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
@@ -168,7 +168,7 @@
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>LONG WINAPI <span style="color:#a6e22e">CustomExceptionHandler</span>(PEXCEPTION_POINTERS pExceptionInfo)
 </span></span><span style="display:flex;"><span>{
-</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;[x] Custom exception handler executed. Exception code: 0x%X</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, pExceptionInfo<span style="color:#f92672">-&gt;</span>ExceptionRecord<span style="color:#f92672">-&gt;</span>ExceptionCode);
+</span></span><span style="display:flex;"><span>	printf(<span style="color:#e6db74">&#34;[x] Exception code: 0x%X</span><span style="color:#ae81ff">\n</span><span style="color:#e6db74">&#34;</span>, pExceptionInfo<span style="color:#f92672">-&gt;</span>ExceptionRecord<span style="color:#f92672">-&gt;</span>ExceptionCode);
 </span></span><span style="display:flex;"><span>
 </span></span><span style="display:flex;"><span>	<span style="color:#75715e">// Modify the instruction pointer (EIP) to jump to the redirected execution
 </span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>	pExceptionInfo<span style="color:#f92672">-&gt;</span>ContextRecord<span style="color:#f92672">-&gt;</span>Eip <span style="color:#f92672">=</span> (DWORD_PTR)RedirectedExecution;
