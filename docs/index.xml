@@ -208,13 +208,25 @@ LONG PvectoredExceptionHandler(
 </code></pre><p>Now we have all the intrinsic details about it, and we can understand what goes within the <strong>Handler</strong> function. I&rsquo;m forcing an <strong>ACCESS_VIOLATION</strong> and using my <em>Handler</em> to take care of it; if it is the expected exception, I will change the <strong>EIP</strong> to my shellcode.</p>
 <h3 id="the-debugger-view">The Debugger View</h3>
 <p>The address of the shellcode in memory and in sequence the <strong>AddVectoredExceptionHandler</strong> function with the renamed <strong>veh_fn_handler</strong>
-</p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-shellcode-memory.png" title="x64dbg Shellcode in memory" data-thumbnail="/images/exceptionHandlers/x64dbg-shellcode-memory.png" data-sub-html="<h2>Shellcode in memory</h2><p>x64dbg Shellcode in memory</p>">
+        
+    </a><figcaption class="image-caption">Shellcode in memory</figcaption>
+    </figure></p>
 <p>When we arrive at the point where the null pointer would receive a value, we get the exception.
-</p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64fbg-access-violation.png" title="x64dbg ACCESS_VIOLATION" data-thumbnail="/images/exceptionHandlers/x64fbg-access-violation.png" data-sub-html="<h2>ACCESS_VIOLATION on x64dbg</h2><p>x64dbg ACCESS_VIOLATION</p>">
+        
+    </a><figcaption class="image-caption">ACCESS_VIOLATION on x64dbg</figcaption>
+    </figure></p>
 <p>After that, pressing <strong>F9</strong> will reach our breakpoint on the <strong>veh_fn_handler</strong> and once more pressing <strong>F9</strong> we arrive at our <em>shellcode</em> by the <strong>EXCEPTION_SINGLE_STEP</strong>.</p>
-<p></p>
+<p><figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-exception-message.png" title="x64dbg Exception Message" data-thumbnail="/images/exceptionHandlers/x64dbg-exception-message.png" data-sub-html="<h2>Exception message</h2><p>x64dbg Exception Message</p>">
+        
+    </a><figcaption class="image-caption">Exception message</figcaption>
+    </figure></p>
 <p>And finally :D
-</p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-shellcode.png" title="x64dbg shellcode" data-thumbnail="/images/exceptionHandlers/x64dbg-shellcode.png" data-sub-html="<h2>Shellcode on debugger</h2><p>x64dbg shellcode</p>">
+        
+    </a><figcaption class="image-caption">Shellcode on debugger</figcaption>
+    </figure></p>
 <h2 id="conclusion">Conclusion</h2>
 <p>The idea behind this post was to show a different approach used by some malware families to achieve their goals in a way that requires the analyst to spend some time flowing through the code to understand what is happening. With these simple examples, anyone interested in this can compile the code and take a look at the debugger and disassembler.</p>
 <p>Reversing is mostly a case of practice! Do and repeat the process as much as you can until it starts to make sense.</p>

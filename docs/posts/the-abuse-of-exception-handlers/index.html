@@ -33,7 +33,7 @@
                             "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
                             "width":  457 ,
                             "height":  457 
-                        }],"genre": "posts","keywords": "Malware, Reversing","wordcount":  1442 ,
+                        }],"genre": "posts","keywords": "Malware, Reversing","wordcount":  1453 ,
         "url": "https:\/\/moval0x1.github.io\/posts\/the-abuse-of-exception-handlers\/","datePublished": "2024-06-26T18:20:43-03:00","dateModified": "2024-06-26T18:20:43-03:00","publisher": {
             "@type": "Organization",
             "name": "xxxx","logo": "https:\/\/moval0x1.github.io\/images\/avatar.png"},"author": {
@@ -75,7 +75,7 @@
             <div class="toc-content" id="toc-content-auto"></div>
         </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">The Abuse of Exception Handlers</h1><div class="post-meta">
             <div class="post-meta-line"><span class="post-author"><a href="https://moval0x1.github.io/" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>moval0x1</a></span>&nbsp;<span class="post-category">included in <a href="/categories/reversing/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Reversing</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-06-26">2024-06-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1442 words&nbsp;
+            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-06-26">2024-06-26</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1453 words&nbsp;
                 <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;7 minutes&nbsp;<span id="/posts/the-abuse-of-exception-handlers/" class="leancloud_visitors" data-flag-title="The Abuse of Exception Handlers">
                         <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
                     </span>&nbsp;</div>
@@ -320,41 +320,49 @@ LONG PvectoredExceptionHandler(
 </code></pre><p>Now we have all the intrinsic details about it, and we can understand what goes within the <strong>Handler</strong> function. I&rsquo;m forcing an <strong>ACCESS_VIOLATION</strong> and using my <em>Handler</em> to take care of it; if it is the expected exception, I will change the <strong>EIP</strong> to my shellcode.</p>
 <h3 id="the-debugger-view">The Debugger View</h3>
 <p>The address of the shellcode in memory and in sequence the <strong>AddVectoredExceptionHandler</strong> function with the renamed <strong>veh_fn_handler</strong>
-<img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/images/exceptionHandlers/x64dbg-shellcode-memory.png"
-        data-srcset="/images/exceptionHandlers/x64dbg-shellcode-memory.png, /images/exceptionHandlers/x64dbg-shellcode-memory.png 1.5x, /images/exceptionHandlers/x64dbg-shellcode-memory.png 2x"
-        data-sizes="auto"
-        alt="/images/exceptionHandlers/x64dbg-shellcode-memory.png"
-        title="x64dbg Shellcode in memory" width="1655" height="653" /></p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-shellcode-memory.png" title="x64dbg Shellcode in memory" data-thumbnail="/images/exceptionHandlers/x64dbg-shellcode-memory.png" data-sub-html="<h2>Shellcode in memory</h2><p>x64dbg Shellcode in memory</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/exceptionHandlers/x64dbg-shellcode-memory.png"
+            data-srcset="/images/exceptionHandlers/x64dbg-shellcode-memory.png, /images/exceptionHandlers/x64dbg-shellcode-memory.png 1.5x, /images/exceptionHandlers/x64dbg-shellcode-memory.png 2x"
+            data-sizes="auto"
+            alt="/images/exceptionHandlers/x64dbg-shellcode-memory.png" width="1655" height="653" />
+    </a><figcaption class="image-caption">Shellcode in memory</figcaption>
+    </figure></p>
 <p>When we arrive at the point where the null pointer would receive a value, we get the exception.
-<img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/images/exceptionHandlers/x64fbg-access-violation.png"
-        data-srcset="/images/exceptionHandlers/x64fbg-access-violation.png, /images/exceptionHandlers/x64fbg-access-violation.png 1.5x, /images/exceptionHandlers/x64fbg-access-violation.png 2x"
-        data-sizes="auto"
-        alt="/images/exceptionHandlers/x64fbg-access-violation.png"
-        title="x64dbg ACCESS_VIOLATION" width="1059" height="570" /></p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64fbg-access-violation.png" title="x64dbg ACCESS_VIOLATION" data-thumbnail="/images/exceptionHandlers/x64fbg-access-violation.png" data-sub-html="<h2>ACCESS_VIOLATION on x64dbg</h2><p>x64dbg ACCESS_VIOLATION</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/exceptionHandlers/x64fbg-access-violation.png"
+            data-srcset="/images/exceptionHandlers/x64fbg-access-violation.png, /images/exceptionHandlers/x64fbg-access-violation.png 1.5x, /images/exceptionHandlers/x64fbg-access-violation.png 2x"
+            data-sizes="auto"
+            alt="/images/exceptionHandlers/x64fbg-access-violation.png" width="1059" height="570" />
+    </a><figcaption class="image-caption">ACCESS_VIOLATION on x64dbg</figcaption>
+    </figure></p>
 <p>After that, pressing <strong>F9</strong> will reach our breakpoint on the <strong>veh_fn_handler</strong> and once more pressing <strong>F9</strong> we arrive at our <em>shellcode</em> by the <strong>EXCEPTION_SINGLE_STEP</strong>.</p>
-<p><img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/images/exceptionHandlers/x64dbg-exception-message.png"
-        data-srcset="/images/exceptionHandlers/x64dbg-exception-message.png, /images/exceptionHandlers/x64dbg-exception-message.png 1.5x, /images/exceptionHandlers/x64dbg-exception-message.png 2x"
-        data-sizes="auto"
-        alt="/images/exceptionHandlers/x64dbg-exception-message.png"
-        title="x64dbg Exception Message" width="456" height="23" /></p>
+<p><figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-exception-message.png" title="x64dbg Exception Message" data-thumbnail="/images/exceptionHandlers/x64dbg-exception-message.png" data-sub-html="<h2>Exception message</h2><p>x64dbg Exception Message</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/exceptionHandlers/x64dbg-exception-message.png"
+            data-srcset="/images/exceptionHandlers/x64dbg-exception-message.png, /images/exceptionHandlers/x64dbg-exception-message.png 1.5x, /images/exceptionHandlers/x64dbg-exception-message.png 2x"
+            data-sizes="auto"
+            alt="/images/exceptionHandlers/x64dbg-exception-message.png" width="456" height="23" />
+    </a><figcaption class="image-caption">Exception message</figcaption>
+    </figure></p>
 <p>And finally :D
-<img
-        class="lazyload"
-        src="/svg/loading.min.svg"
-        data-src="/images/exceptionHandlers/x64dbg-shellcode.png"
-        data-srcset="/images/exceptionHandlers/x64dbg-shellcode.png, /images/exceptionHandlers/x64dbg-shellcode.png 1.5x, /images/exceptionHandlers/x64dbg-shellcode.png 2x"
-        data-sizes="auto"
-        alt="/images/exceptionHandlers/x64dbg-shellcode.png"
-        title="x64dbg shellcode" width="1589" height="193" /></p>
+<figure><a class="lightgallery" href="/images/exceptionHandlers/x64dbg-shellcode.png" title="x64dbg shellcode" data-thumbnail="/images/exceptionHandlers/x64dbg-shellcode.png" data-sub-html="<h2>Shellcode on debugger</h2><p>x64dbg shellcode</p>">
+        <img
+            class="lazyload"
+            src="/svg/loading.min.svg"
+            data-src="/images/exceptionHandlers/x64dbg-shellcode.png"
+            data-srcset="/images/exceptionHandlers/x64dbg-shellcode.png, /images/exceptionHandlers/x64dbg-shellcode.png 1.5x, /images/exceptionHandlers/x64dbg-shellcode.png 2x"
+            data-sizes="auto"
+            alt="/images/exceptionHandlers/x64dbg-shellcode.png" width="1589" height="193" />
+    </a><figcaption class="image-caption">Shellcode on debugger</figcaption>
+    </figure></p>
 <h2 id="conclusion">Conclusion</h2>
 <p>The idea behind this post was to show a different approach used by some malware families to achieve their goals in a way that requires the analyst to spend some time flowing through the code to understand what is happening. With these simple examples, anyone interested in this can compile the code and take a look at the debugger and disassembler.</p>
 <p>Reversing is mostly a case of practice! Do and repeat the process as much as you can until it starts to make sense.</p>
