@@ -10,10 +10,7 @@
     <author>moval0x1</author>
     <guid>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</guid>
     <description><![CDATA[<h1 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h1>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-logo.png" title="x64dbg logo" data-thumbnail="/images/x64dbgScripts/x64dbg-logo.png" data-sub-html="<h2>x64dbg logo</h2><p>x64dbg logo</p>">
-        
-    </a><figcaption class="image-caption">x64dbg logo</figcaption>
-    </figure></p>
+<p></p>
 <p>According to <a href="https://x64dbg.com/#" target="_blank" rel="noopener noreffer "><strong>x64bg</strong></a> website, it is <em>an open-source x64/x32 debugger for windows</em>. You can find an extensible list of features there.</p>
 <p>If you are generally interested in reverse engineering, you&rsquo;ll undoubtedly use x64dbg and I&rsquo;m sure you&rsquo;ll love it. Thanks for the fantastic tool <a href="https://github.com/mrexodia" target="_blank" rel="noopener noreffer "><strong>mrexodia</strong></a>.</p>
 <h1 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h1>
