@@ -11,11 +11,11 @@
     <pubDate>Wed, 28 Aug 2024 19:23:17 -0300</pubDate>
     <author>moval0x1</author>
     <guid>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</guid>
-    <description><![CDATA[<h1 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h1>
+    <description><![CDATA[<h2 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h2>
 <p></p>
 <p>According to <a href="https://x64dbg.com/#" target="_blank" rel="noopener noreffer "><strong>x64bg</strong></a> website, it is <em>an open-source x64/x32 debugger for windows</em>. You can find an extensible list of features there.</p>
 <p>If you are generally interested in reverse engineering, you&rsquo;ll undoubtedly use x64dbg and I&rsquo;m sure you&rsquo;ll love it. Thanks for the fantastic tool <a href="https://github.com/mrexodia" target="_blank" rel="noopener noreffer "><strong>mrexodia</strong></a>.</p>
-<h1 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h1>
+<h2 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h2>
 <p>x64dbg scripts are small chunks of instructions that are executed step by step. All the script commands are described <a href="https://help.x64dbg.com/en/latest/commands/index.html" target="_blank" rel="noopener noreffer "><strong>here</strong></a>. Let&rsquo;s start with a <em>&ldquo;Hello World!&rdquo;</em> as usual.</p>
 <p>We can do it in two different ways: <a href="https://help.x64dbg.com/en/latest/commands/script/log.html" target="_blank" rel="noopener noreffer "><strong>log</strong></a> command or <a href="https://help.x64dbg.com/en/latest/commands/script/msg.html" target="_blank" rel="noopener noreffer "><strong>msg</strong></a> command. Both of them are super easy to work with!</p>
 <h2 id="how-can-we-use-it">How can we use it?</h2>
@@ -27,7 +27,7 @@
 <h4 id="msg-command">Msg command</h4>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>
 </span></span></code></pre></div><p></p>
-<h1 id="using-it-in-real-life">Using it in real life</h1>
+<h2 id="using-it-in-real-life">Using it in real life</h2>
 <p><figure><a class="lightgallery" href="/images/x64dbgScripts/dwight-lets-do-this.gif" title="Lets do this!" data-thumbnail="/images/x64dbgScripts/dwight-lets-do-this.gif" data-sub-html="<h2>Let&#39;s do this!</h2><p>Lets do this!</p>">
         
     </a><figcaption class="image-caption">Let's do this!</figcaption>
@@ -182,7 +182,7 @@ On the x64dbg Github we found some excellent scripts and fortunately, one of the
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;This PE file is not supported!&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">ret</span>
 </span></span></code></pre></div><p>If the script encounters an unsupported <strong>PE</strong> file, it outputs an error message and terminates.</p>
-<h1 id="conclusion">Conclusion</h1>
+<h2 id="conclusion">Conclusion</h2>
 <p>You can create scripts to automate most repetitive tasks or make them help, such as unpacking a specific packer, such as Themida.</p>
 ]]></description>
 </item>

@@ -86,14 +86,14 @@
                 </div>
                 <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
+    <li><a href="#a-short-overview-of-x64dbg">A short overview of x64dbg</a></li>
+    <li><a href="#what-are-x64dbg-scripts">What are x64dbg scripts?</a></li>
     <li><a href="#how-can-we-use-it">How can we use it?</a>
       <ul>
         <li><a href="#some-simple-examples">Some simple examples</a></li>
       </ul>
     </li>
-  </ul>
-
-  <ul>
+    <li><a href="#using-it-in-real-life">Using it in real life</a></li>
     <li><a href="#getting-the-first-malware-sample">Getting the first malware sample</a></li>
     <li><a href="#understand-it-first-part">Understand it, first part</a></li>
     <li><a href="#crafting-the-easiest-script-in-the-world">Crafting the easiest script in the world</a></li>
@@ -105,9 +105,10 @@
       </ul>
     </li>
     <li><a href="#breaking-down-the-script">Breaking Down the Script</a></li>
+    <li><a href="#conclusion">Conclusion</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h1 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h1>
+            </div><div class="content" id="content"><h2 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h2>
 <p><img
         class="lazyload"
         src="/svg/loading.min.svg"
@@ -118,7 +119,7 @@
         title="x64dbg logo" width="479" height="430" /></p>
 <p>According to <a href="https://x64dbg.com/#" target="_blank" rel="noopener noreffer "><strong>x64bg</strong></a> website, it is <em>an open-source x64/x32 debugger for windows</em>. You can find an extensible list of features there.</p>
 <p>If you are generally interested in reverse engineering, you&rsquo;ll undoubtedly use x64dbg and I&rsquo;m sure you&rsquo;ll love it. Thanks for the fantastic tool <a href="https://github.com/mrexodia" target="_blank" rel="noopener noreffer "><strong>mrexodia</strong></a>.</p>
-<h1 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h1>
+<h2 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h2>
 <p>x64dbg scripts are small chunks of instructions that are executed step by step. All the script commands are described <a href="https://help.x64dbg.com/en/latest/commands/index.html" target="_blank" rel="noopener noreffer "><strong>here</strong></a>. Let&rsquo;s start with a <em>&ldquo;Hello World!&rdquo;</em> as usual.</p>
 <p>We can do it in two different ways: <a href="https://help.x64dbg.com/en/latest/commands/script/log.html" target="_blank" rel="noopener noreffer "><strong>log</strong></a> command or <a href="https://help.x64dbg.com/en/latest/commands/script/msg.html" target="_blank" rel="noopener noreffer "><strong>msg</strong></a> command. Both of them are super easy to work with!</p>
 <h2 id="how-can-we-use-it">How can we use it?</h2>
@@ -144,7 +145,7 @@
         data-sizes="auto"
         alt="/images/x64dbgScripts/x64dbg-msg-helloworld.png"
         title="x64dbg msg Hello World" width="131" height="121" /></p>
-<h1 id="using-it-in-real-life">Using it in real life</h1>
+<h2 id="using-it-in-real-life">Using it in real life</h2>
 <p><figure><a class="lightgallery" href="/images/x64dbgScripts/dwight-lets-do-this.gif" title="Lets do this!" data-thumbnail="/images/x64dbgScripts/dwight-lets-do-this.gif" data-sub-html="<h2>Let&#39;s do this!</h2><p>Lets do this!</p>">
         <img
             class="lazyload"
@@ -359,7 +360,7 @@ On the x64dbg Github we found some excellent scripts and fortunately, one of the
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;This PE file is not supported!&#34;</span>
 </span></span><span style="display:flex;"><span><span style="color:#a6e22e">ret</span>
 </span></span></code></pre></div><p>If the script encounters an unsupported <strong>PE</strong> file, it outputs an error message and terminates.</p>
-<h1 id="conclusion">Conclusion</h1>
+<h2 id="conclusion">Conclusion</h2>
 <p>You can create scripts to automate most repetitive tasks or make them help, such as unpacking a specific packer, such as Themida.</p>
 </div><div class="post-footer" id="post-footer">
     <div class="post-info">
