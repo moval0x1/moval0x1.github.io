@@ -1,90 +1,105 @@
 <!DOCTYPE html>
-<html lang="en-us">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="robots" content="noodp" />
-        <title>Qakbot Analysis - The Reverser&#39;s Draft</title><meta name="Description" content="Qakbot Analysis Description"><meta property="og:title" content="Qakbot Analysis" />
-<meta property="og:description" content="Qakbot Analysis Description" />
-<meta property="og:type" content="article" />
-<meta property="og:url" content="https://moval0x1.github.io/posts/qakbot-analysis/" /><meta property="og:image" content="https://moval0x1.github.io/logo.png" /><meta property="article:section" content="posts" />
-<meta property="article:published_time" content="2024-01-20T14:59:04-03:00" />
-<meta property="article:modified_time" content="2024-01-20T14:59:04-03:00" /><meta property="og:site_name" content="The Reverser&#39;s Draft" />
+<html itemscope itemtype="http://schema.org/WebPage" lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>Qakbot Analysis - The Reverser&#39;s Draft</title><meta name="author" content="moval0x1">
+<meta name="description" content="Qakbot Analysis Description"><meta name="keywords" content='Zero2Auto, Malware, Reversing'>
+  <meta itemprop="name" content="Qakbot Analysis">
+  <meta itemprop="description" content="Qakbot Analysis Description">
+  <meta itemprop="datePublished" content="2024-01-20T14:59:04-03:00">
+  <meta itemprop="dateModified" content="2024-01-20T14:59:04-03:00">
+  <meta itemprop="wordCount" content="1146">
+  <meta itemprop="image" content="https://moval0x1.github.io/logo.png">
+  <meta itemprop="keywords" content="Zero2Auto,Malware,Reversing"><meta property="og:url" content="https://moval0x1.github.io/posts/qakbot-analysis/">
+  <meta property="og:site_name" content="The Reverser&#39;s Draft">
+  <meta property="og:title" content="Qakbot Analysis">
+  <meta property="og:description" content="Qakbot Analysis Description">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2024-01-20T14:59:04-03:00">
+    <meta property="article:modified_time" content="2024-01-20T14:59:04-03:00">
+    <meta property="article:tag" content="Zero2Auto">
+    <meta property="article:tag" content="Malware">
+    <meta property="article:tag" content="Reversing">
+    <meta property="og:image" content="https://moval0x1.github.io/logo.png">
 
-<meta name="twitter:card" content="summary_large_image" />
-<meta name="twitter:image" content="https://moval0x1.github.io/logo.png" /><meta name="twitter:title" content="Qakbot Analysis"/>
-<meta name="twitter:description" content="Qakbot Analysis Description"/>
-<meta name="twitter:site" content="@moval0x1"/>
-<meta name="application-name" content="The Reverser&#39;s Draft">
-<meta name="apple-mobile-web-app-title" content="The Reverser&#39;s Draft"><meta name="theme-color" content="#ffffff"><meta name="msapplication-TileColor" content="#da532c">
-        <link rel="icon" href="/favicon.svg"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="manifest" href="/site.webmanifest"><link rel="canonical" href="https://moval0x1.github.io/posts/qakbot-analysis/" /><link rel="prev" href="https://moval0x1.github.io/posts/zero2auto-custom-sample-part-2/" /><link rel="next" href="https://moval0x1.github.io/posts/the-abuse-of-exception-handlers/" /><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css"></noscript><link rel="preload" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-        <noscript><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@4.1.1/animate.min.css"></noscript><script type="application/ld+json">
-    {
-        "@context": "http://schema.org",
-        "@type": "BlogPosting",
-        "headline": "Qakbot Analysis",
-        "inLanguage": "en-us",
-        "mainEntityOfPage": {
-            "@type": "WebPage",
-            "@id": "https:\/\/moval0x1.github.io\/posts\/qakbot-analysis\/"
-        },"image": [{
-                            "@type": "ImageObject",
-                            "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
-                            "width":  457 ,
-                            "height":  457 
-                        }],"genre": "posts","keywords": "Zero2Auto, Malware, Reversing","wordcount":  1147 ,
-        "url": "https:\/\/moval0x1.github.io\/posts\/qakbot-analysis\/","datePublished": "2024-01-20T14:59:04-03:00","dateModified": "2024-01-20T14:59:04-03:00","publisher": {
-            "@type": "Organization",
-            "name": "xxxx","logo": "https:\/\/moval0x1.github.io\/images\/avatar.png"},"author": {
-                "@type": "Person",
-                "name": "moval0x1"
-            },"description": "Qakbot Analysis Description"
-    }
-    </script></head>
-    <body data-header-desktop="fixed" data-header-mobile="auto"><script type="text/javascript">(window.localStorage && localStorage.getItem('theme') ? localStorage.getItem('theme') === 'dark' : ('dark' === 'auto' ? window.matchMedia('(prefers-color-scheme: dark)').matches : 'dark' === 'dark')) && document.body.setAttribute('theme', 'dark');</script>
-
-        <div id="mask"></div><div class="wrapper"><header class="desktop" id="header-desktop">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://moval0x1.github.io/logo.png">
+  <meta name="twitter:title" content="Qakbot Analysis">
+  <meta name="twitter:description" content="Qakbot Analysis Description">
+      <meta name="twitter:site" content="@moval0x1">
+<meta name="twitter:creator" content="@moval0x1" /><meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="https://moval0x1.github.io/posts/qakbot-analysis/" title="Qakbot Analysis - The Reverser&#39;s Draft" /><link rel="prev" type="text/html" href="https://moval0x1.github.io/posts/zero2auto-custom-sample-part-2/" title="Zero 2 Auto Custom sample - Part 2" /><link rel="next" type="text/html" href="https://moval0x1.github.io/posts/the-abuse-of-exception-handlers/" title="The Abuse of Exception Handlers" /><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "Qakbot Analysis",
+    "inLanguage": "en-us",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/moval0x1.github.io\/posts\/qakbot-analysis\/"
+    },"image": [{
+              "@type": "ImageObject",
+              "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
+              "width":  457 ,
+              "height":  457 
+            }],"genre": "posts","keywords": "Zero2Auto, Malware, Reversing","wordcount":  1146 ,
+    "url": "https:\/\/moval0x1.github.io\/posts\/qakbot-analysis\/","datePublished": "2024-01-20T14:59:04-03:00","dateModified": "2024-01-20T14:59:04-03:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "moval0x1"
+      },"description": "Qakbot Analysis Description"
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="The Reverser&#39;s Draft"><span class="header-title-text">The Reverser&#39;s Draft</span></a><span class="typeit header-subtitle"><template>Coding &amp; Malware &amp; Reverse Engineering</template></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/posts/"><i class="fa-solid fa-file-lines fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item">
+              <a class="menu-link" href="/about/"><i class="fa-solid fa-solid fa-user fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
     <div class="header-wrapper">
-        <div class="header-title">
-            <a href="/" title="The Reverser&#39;s Draft">The Reverser&#39;s Draft</a>
-        </div>
-        <div class="menu">
-            <div class="menu-inner"><a class="menu-item" href="/posts/"> Posts </a><a class="menu-item" href="/tags/"> Tags </a><a class="menu-item" href="/categories/"> Categories </a><span class="menu-item delimiter"></span><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                    <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-                </a></div>
-        </div>
+      <div class="header-title">
+        <a href="/" title="The Reverser&#39;s Draft"><span class="header-title-text">The Reverser&#39;s Draft</span></a><span class="typeit header-subtitle"><template>Coding &amp; Malware &amp; Reverse Engineering</template></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
     </div>
-</header><header class="mobile" id="header-mobile">
-    <div class="header-container">
-        <div class="header-wrapper">
-            <div class="header-title">
-                <a href="/" title="The Reverser&#39;s Draft">The Reverser&#39;s Draft</a>
-            </div>
-            <div class="menu-toggle" id="menu-toggle-mobile">
-                <span></span><span></span><span></span>
-            </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="menu-item"><a class="menu-link" href="/posts/"><i class="fa-solid fa-file-lines fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item"><a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item"><a class="menu-link" href="/about/"><i class="fa-solid fa-solid fa-user fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>Qakbot Analysis</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="/about" title="Author" rel=" author" class="author"><img class="avatar" src='/images/profile.jpg' alt="moval0x1" height="16" width="16">&nbsp;moval0x1</a></span><span class="post-included-in">&nbsp;included in <a href="/categories/zero2auto/" class="post-category" title="Category - Zero2Auto"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Zero2Auto</a></span></div><div class="post-meta-line"><span title="published on 2024-01-20 14:59:04"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2024-01-20">2024-01-20</time></span>&nbsp;<span title="1146 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 1200 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>6 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
         </div>
-        <div class="menu" id="menu-mobile"><a class="menu-item" href="/posts/" title="">Posts</a><a class="menu-item" href="/tags/" title="">Tags</a><a class="menu-item" href="/categories/" title="">Categories</a><a href="javascript:void(0);" class="menu-item theme-switch" title="Switch Theme">
-                <i class="fas fa-adjust fa-fw" aria-hidden="true"></i>
-            </a></div>
-    </div>
-</header><main class="main">
-                <div class="container"><div class="toc" id="toc-auto">
-            <h2 class="toc-title">Contents</h2>
-            <div class="toc-content" id="toc-content-auto"></div>
-        </div><article class="page single"><h1 class="single-title animate__animated animate__flipInX">Qakbot Analysis</h1><div class="post-meta">
-            <div class="post-meta-line"><span class="post-author"><a href="https://moval0x1.github.io/" title="Author" target="_blank" rel="noopener noreffer author" class="author"><i class="fas fa-user-circle fa-fw" aria-hidden="true"></i>moval0x1</a></span>&nbsp;<span class="post-category">included in <a href="/categories/zero2auto/"><i class="far fa-folder fa-fw" aria-hidden="true"></i>Zero2Auto</a></span></div>
-            <div class="post-meta-line"><i class="far fa-calendar-alt fa-fw" aria-hidden="true"></i>&nbsp;<time datetime="2024-01-20">2024-01-20</time>&nbsp;<i class="fas fa-pencil-alt fa-fw" aria-hidden="true"></i>&nbsp;1147 words&nbsp;
-                <i class="far fa-clock fa-fw" aria-hidden="true"></i>&nbsp;6 minutes&nbsp;<span id="/posts/qakbot-analysis/" class="leancloud_visitors" data-flag-title="Qakbot Analysis">
-                        <i class="far fa-eye fa-fw" aria-hidden="true"></i>&nbsp;<span class=leancloud-visitors-count></span>&nbsp;views
-                    </span>&nbsp;</div>
-        </div><div class="details toc" id="toc-static"  data-kept="">
-                <div class="details-summary toc-title">
-                    <span>Contents</span>
-                    <span><i class="details-icon fas fa-angle-right" aria-hidden="true"></i></span>
-                </div>
-                <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
   <ul>
     <li><a href="#the-qakbot-malware-family">The Qakbot Malware Family</a></li>
     <li><a href="#loader">Loader</a></li>
@@ -99,121 +114,61 @@
     <li><a href="#concluding-thoughts">Concluding Thoughts</a></li>
   </ul>
 </nav></div>
-            </div><div class="content" id="content"><h2 id="the-qakbot-malware-family">The Qakbot Malware Family</h2>
-<p><a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.qakbot" target="_blank" rel="noopener noreffer "><strong>QBot</strong></a> is a modular information stealer also known as Oakboat, Pinkslipbot, Qbot or Quakbot. It has been active for years since 2007. It has historically been known as a banking Trojan, meaning that it steals financial data from infected systems, and a loader using C2 servers for payload targeting and download.</p>
-<h2 id="loader">Loader</h2>
-<p>When I got this sample, the first thing that caught my eye was the lack of strings and the number of sections with their names, which is not something normal in a binary.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/die-sections.png" title="DiE Sections" data-thumbnail="/images/zero2auto/2024-01-20/die-sections.png" data-sub-html="<h2>DiE Sections</h2><p>DiE Sections</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/die-sections.png"
-            data-srcset="/images/zero2auto/2024-01-20/die-sections.png, /images/zero2auto/2024-01-20/die-sections.png 1.5x, /images/zero2auto/2024-01-20/die-sections.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/die-sections.png" width="1131" height="128" />
-    </a><figcaption class="image-caption">DiE Sections</figcaption>
-    </figure></p>
+      </div><div class="content" id="content"><h2 class="heading-element" id="the-qakbot-malware-family"><span>The Qakbot Malware Family</span>
+  <a href="#the-qakbot-malware-family" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p><a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.qakbot"target="_blank" rel="external nofollow noopener noreferrer"><strong>QBot</strong></a> is a modular information stealer also known as Oakboat, Pinkslipbot, Qbot or Quakbot. It has been active for years since 2007. It has historically been known as a banking Trojan, meaning that it steals financial data from infected systems, and a loader using C2 servers for payload targeting and download.</p>
+<h2 class="heading-element" id="loader"><span>Loader</span>
+  <a href="#loader" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>When I got this sample, the first thing that caught my eye was the lack of strings and the number of sections with their names, which is not something normal in a binary.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/die-sections.png" title="DiE Sections" data-thumbnail="/images/zero2auto/2024-01-20/die-sections.png" data-sub-html="<h2>DiE Sections</h2><p>DiE Sections</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/die-sections.png' alt="DiE Sections" height="128" width="1131"></a><figcaption class="image-caption">DiE Sections</figcaption>
+  </figure></p>
 <p>My starting point in these cases is to set some breakpoints in known APIs such as <strong><code>VirtualAlloc</code></strong>, <strong><code>VirtualProtect</code></strong>, <strong><code>WriteProcessMemory</code></strong>, <strong><code>CreateProcessInternalW</code></strong> and others that can be used in the same context, either to self injection or remote injection. I could execute the binary and validate if it has some injection or anything related to that. However, let&rsquo;s start putting BP on the common APIs used for any injection.</p>
 <p>In that case, as I set a BP on VirtualProtect, it stopped on the API, and I arrived at the right point after putting the PE section onto the dump.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-dump.png" title="x64dbg Dump" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-dump.png" data-sub-html="<h2>x64dbg Dump</h2><p>x64dbg Dump</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/x64dbg-dump.png"
-            data-srcset="/images/zero2auto/2024-01-20/x64dbg-dump.png, /images/zero2auto/2024-01-20/x64dbg-dump.png 1.5x, /images/zero2auto/2024-01-20/x64dbg-dump.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/x64dbg-dump.png" width="1360" height="317" />
-    </a><figcaption class="image-caption">x64dbg Dump</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-dump.png" title="x64dbg Dump" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-dump.png" data-sub-html="<h2>x64dbg Dump</h2><p>x64dbg Dump</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/x64dbg-dump.png' alt="x64dbg Dump" height="317" width="1360"></a><figcaption class="image-caption">x64dbg Dump</figcaption>
+  </figure></p>
 <p>We have the second stage file at the base address <strong><code>0x2550000</code></strong>. To dump it, follow these steps: <strong>Right Click on <code>0x4D</code> on dump -&gt; Follow in Memory Map -&gt; Right-click on the base address -&gt; Dump Memory to File</strong>.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/pe-bear-imports.png" title="PE-bear Imports" data-thumbnail="/images/zero2auto/2024-01-20/pe-bear-imports.png" data-sub-html="<h2>PE-bear Imports</h2><p>PE-bear Imports</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/pe-bear-imports.png"
-            data-srcset="/images/zero2auto/2024-01-20/pe-bear-imports.png, /images/zero2auto/2024-01-20/pe-bear-imports.png 1.5x, /images/zero2auto/2024-01-20/pe-bear-imports.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/pe-bear-imports.png" width="1162" height="663" />
-    </a><figcaption class="image-caption">PE-bear Imports</figcaption>
-    </figure></p>
-<p>We can see on <a href="https://github.com/hasherezade/pe-bear" target="_blank" rel="noopener noreffer "><strong>PE-bear</strong></a> that all the imports are good, so we don&rsquo;t need anything to fix it! :)</p>
-<h2 id="first-stage">First Stage</h2>
-<p>In this stage, what caught my attention was the entropy to the <strong><code>.rdata</code></strong> section and <strong><code>.rsrc</code></strong>, and the lack of useful strings.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/die-entropy.png" title="DiE Entropy" data-thumbnail="/images/zero2auto/2024-01-20/die-entropy.png" data-sub-html="<h2>DiE Entropy</h2><p>DiE Entropy</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/die-entropy.png"
-            data-srcset="/images/zero2auto/2024-01-20/die-entropy.png, /images/zero2auto/2024-01-20/die-entropy.png 1.5x, /images/zero2auto/2024-01-20/die-entropy.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/die-entropy.png" width="889" height="589" />
-    </a><figcaption class="image-caption">DiE Entropy</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/pe-bear-imports.png" title="PE-bear Imports" data-thumbnail="/images/zero2auto/2024-01-20/pe-bear-imports.png" data-sub-html="<h2>PE-bear Imports</h2><p>PE-bear Imports</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/pe-bear-imports.png' alt="PE-bear Imports" height="663" width="1162"></a><figcaption class="image-caption">PE-bear Imports</figcaption>
+  </figure></p>
+<p>We can see on <a href="https://github.com/hasherezade/pe-bear"target="_blank" rel="external nofollow noopener noreferrer"><strong>PE-bear</strong></a> that all the imports are good, so we don&rsquo;t need anything to fix it! :)</p>
+<h2 class="heading-element" id="first-stage"><span>First Stage</span>
+  <a href="#first-stage" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>In this stage, what caught my attention was the entropy to the <strong><code>.rdata</code></strong> section and <strong><code>.rsrc</code></strong>, and the lack of useful strings.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/die-entropy.png" title="DiE Entropy" data-thumbnail="/images/zero2auto/2024-01-20/die-entropy.png" data-sub-html="<h2>DiE Entropy</h2><p>DiE Entropy</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/die-entropy.png' alt="DiE Entropy" height="589" width="889"></a><figcaption class="image-caption">DiE Entropy</figcaption>
+  </figure></p>
 <p>Using BinaryNinja to take a look in that stage, I was able to see a interesting function with lots of calls and the result of these function be a value that would be used in a <strong><code>GetModuleHandleA</code></strong>. Hmm, it raised some flag to me.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png" title="BinaryNinja Decrypt Func" data-thumbnail="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png" data-sub-html="<h2>BinaryNinja Decrypt Func</h2><p>BinaryNinja Decrypt Func</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png"
-            data-srcset="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png, /images/zero2auto/2024-01-20/bn-strings-decrypt-func.png 1.5x, /images/zero2auto/2024-01-20/bn-strings-decrypt-func.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png" width="671" height="135" />
-    </a><figcaption class="image-caption">BinaryNinja Decrypt Func</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png" title="BinaryNinja Decrypt Func" data-thumbnail="/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png" data-sub-html="<h2>BinaryNinja Decrypt Func</h2><p>BinaryNinja Decrypt Func</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/bn-strings-decrypt-func.png' alt="BinaryNinja Decrypt Func" height="135" width="671"></a><figcaption class="image-caption">BinaryNinja Decrypt Func</figcaption>
+  </figure></p>
 <p>Looking at this function in the <strong>x64dbg</strong>, things become easier to understand. I could see that after passing this function, it returns a string decrypted. Within this function, we can see the decrypt pattern, as shown below.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png" title="x64dbg Decrypt Routine" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png" data-sub-html="<h2>x64dbg Decrypt Routine</h2><p>x64dbg Decrypt Routine</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png"
-            data-srcset="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png, /images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png 1.5x, /images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png" width="865" height="446" />
-    </a><figcaption class="image-caption">x64dbg Decrypt Routine</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png" title="x64dbg Decrypt Routine" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png" data-sub-html="<h2>x64dbg Decrypt Routine</h2><p>x64dbg Decrypt Routine</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/x64dbg-decrypt-strings-routine.png' alt="x64dbg Decrypt Routine" height="446" width="865"></a><figcaption class="image-caption">x64dbg Decrypt Routine</figcaption>
+  </figure></p>
 <p>To add a layer of simplicity to my <strong>binja</strong> analysis, I just created a simple (and maybe not so good) script to decrypt all these strings and add them as a comment. I&rsquo;ve tried to create the script as close as possible to what&rsquo;s in the assembly code.</p>
-<p>Here are the <strong>binja <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot" target="_blank" rel="noopener noreffer ">scripts</a></strong> used to decrypt strings, APIs, and anything needed for this analysis. After that, you&rsquo;ll find something like that.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png" title="Binary Ninja Plugin" data-thumbnail="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png" data-sub-html="<h2>Binary Ninja Plugin</h2><p>Binary Ninja Plugin</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png"
-            data-srcset="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png, /images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png 1.5x, /images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png" width="1759" height="357" />
-    </a><figcaption class="image-caption">Binary Ninja Plugin</figcaption>
-    </figure></p>
-<p>With strings, it is much better to dive into the malware. Unfortunately, some APIs are resolved in runtime, and even with the names, I cannot see where it would be called. Based on that, I went to the debugger, and with a hand from my friend <a href="https://leandrofroes.github.io/" target="_blank" rel="noopener noreffer "><strong>Leandro</strong></a> - he showed me about this anti-analysis process that I&rsquo;ve passed and didn&rsquo;t catch the idea of - I could understand that the <strong><code>CreateProcess</code></strong> was started as an anti-analysis step. Ask for help is an excellent way to learn; I learned a new trick with his help; thanks, man.</p>
+<p>Here are the <strong>binja <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot"target="_blank" rel="external nofollow noopener noreferrer">scripts</a></strong> used to decrypt strings, APIs, and anything needed for this analysis. After that, you&rsquo;ll find something like that.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png" title="Binary Ninja Plugin" data-thumbnail="/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png" data-sub-html="<h2>Binary Ninja Plugin</h2><p>Binary Ninja Plugin</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/bn-plugin-decrypt-strings.png' alt="Binary Ninja Plugin" height="357" width="1759"></a><figcaption class="image-caption">Binary Ninja Plugin</figcaption>
+  </figure></p>
+<p>With strings, it is much better to dive into the malware. Unfortunately, some APIs are resolved in runtime, and even with the names, I cannot see where it would be called. Based on that, I went to the debugger, and with a hand from my friend <a href="https://leandrofroes.github.io/"target="_blank" rel="external nofollow noopener noreferrer"><strong>Leandro</strong></a> - he showed me about this anti-analysis process that I&rsquo;ve passed and didn&rsquo;t catch the idea of - I could understand that the <strong><code>CreateProcess</code></strong> was started as an anti-analysis step. Ask for help is an excellent way to learn; I learned a new trick with his help; thanks, man.</p>
 <p>Let me try to summarize things here.</p>
 <ol>
 <li>When the binary is executed, it tries to create a new process using the param <strong>/C</strong>.</li>
 <li>This parameter starts a series of <strong>anti-analysis</strong> tricks and leads us down the wrong path.</li>
 <li>Forcing the result <strong>false</strong> after the <strong><code>CreateProcess</code></strong>.</li>
 </ol>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png" title="CreateProcessW" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png" data-sub-html="<h2>CreateProcessW</h2><p>CreateProcessW</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png"
-            data-srcset="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png, /images/zero2auto/2024-01-20/x64dbg-create-process-w.png 1.5x, /images/zero2auto/2024-01-20/x64dbg-create-process-w.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png" width="1917" height="557" />
-    </a><figcaption class="image-caption">CreateProcessW</figcaption>
-    </figure>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png" title="CreateProcessW" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-create-process-w.png" data-sub-html="<h2>CreateProcessW</h2><p>CreateProcessW</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/x64dbg-create-process-w.png' alt="CreateProcessW" height="557" width="1917"></a><figcaption class="image-caption">CreateProcessW</figcaption>
+  </figure>
 With the flow passing by the anti-analysis part, we will not find anything interesting. I&rsquo;ve changed the <strong><code>EAX</code></strong> from <strong><code>1</code></strong> to <strong><code>0</code></strong>. As mentioned at the beginning of this first stage, we have a high entropy in the <strong><code>.rsrc</code></strong> part; based on that, I&rsquo;ve added a breakpoint on the <strong><code>LoadResource</code></strong> API. However, this API is only noticed after decrypting the API names, as shown in the image below.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png" title="CommentsAndSymbols" data-thumbnail="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png" data-sub-html="<h2>Plugin CommentsAndSymbols</h2><p>CommentsAndSymbols</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png"
-            data-srcset="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png, /images/zero2auto/2024-01-20/bn-comments-and-symbols.png 1.5x, /images/zero2auto/2024-01-20/bn-comments-and-symbols.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png" width="502" height="158" />
-    </a><figcaption class="image-caption">Plugin CommentsAndSymbols</figcaption>
-    </figure></p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png" title="Plugin CommentsAndSymbols" data-thumbnail="/images/zero2auto/2024-01-20/bn-comments-and-symbols.png" data-sub-html="<h2>CommentsAndSymbols</h2><p>Plugin CommentsAndSymbols</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/bn-comments-and-symbols.png' alt="CommentsAndSymbols" height="158" width="502"></a><figcaption class="image-caption">Plugin CommentsAndSymbols</figcaption>
+  </figure></p>
 <p>Now, let us analyze the actual flow!</p>
-<h3 id="the-resource">The Resource</h3>
-<p>To start talk about the resource, wee need to understand what happen here. We can put it in parts such as:</p>
+<h3 class="heading-element" id="the-resource"><span>The Resource</span>
+  <a href="#the-resource" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>To start talk about the resource, wee need to understand what happen here. We can put it in parts such as:</p>
 <ol>
 <li>Load the resource.</li>
 <li>Decrypt it using RC4.</li>
@@ -224,72 +179,70 @@ With the flow passing by the anti-analysis part, we will not find anything inter
 <blockquote>
 <p>Follow it in memory map &gt; dump &gt; open in a hex editor and remove the <strong><code>SHA1 SUM</code></strong> before the <strong><code>MZ</code></strong> and overlay, and that&rsquo;s it.</p>
 </blockquote>
-<p>It is easy, but it is much better to have a script to help us find it in the resource section, decrypt it, and save on disk a clear file. Think about it: I&rsquo;ve created a <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot" target="_blank" rel="noopener noreffer "><strong>script</strong></a> and added it to GitHub for those who want to use it.</p>
-<h3 id="scripts">Scripts</h3>
-<p>To understand what the scripts do, let me briefly explain here. We have here a normal <strong><code>RC4</code></strong> routine followed by a <strong><code>SHA1 SUM</code></strong> validation. Although we can see the program here - at least a part of it - <strong>This Program cannot&hellip;</strong>. It doesn&rsquo;t look like the complete straightforward program; after the <strong><code>SHA1</code></strong> validation, a weird value was found that is used out of this call in a comparison: <strong><code>0x616CD31A</code></strong>. Searching for it, I only found it in a blog of a friend of mine <a href="https://darkopcodes.wordpress.com/2020/06/07/malware-analysis-qakbot-part-2/" target="_blank" rel="noopener noreffer "><strong>dark0pcodes</strong></a>. Based on what he says, it is a modified version of the <a href="https://github.com/jibsen/brieflz" target="_blank" rel="noopener noreffer "><strong>BriefLZ</strong></a> compression algorithm, which makes much more sense now.</p>
-<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png" title="Decrypt Resource Routine" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png" data-sub-html="<h2>Decrypt Resource Routine</h2><p>Decrypt Resource Routine</p>">
-        <img
-            class="lazyload"
-            src="/svg/loading.min.svg"
-            data-src="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png"
-            data-srcset="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png, /images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png 1.5x, /images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png 2x"
-            data-sizes="auto"
-            alt="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png" width="1058" height="1029" />
-    </a><figcaption class="image-caption">Decrypt Resource Routine</figcaption>
-    </figure></p>
+<p>It is easy, but it is much better to have a script to help us find it in the resource section, decrypt it, and save on disk a clear file. Think about it: I&rsquo;ve created a <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot"target="_blank" rel="external nofollow noopener noreferrer"><strong>script</strong></a> and added it to GitHub for those who want to use it.</p>
+<h3 class="heading-element" id="scripts"><span>Scripts</span>
+  <a href="#scripts" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>To understand what the scripts do, let me briefly explain here. We have here a normal <strong><code>RC4</code></strong> routine followed by a <strong><code>SHA1 SUM</code></strong> validation. Although we can see the program here - at least a part of it - <strong>This Program cannot&hellip;</strong>. It doesn&rsquo;t look like the complete straightforward program; after the <strong><code>SHA1</code></strong> validation, a weird value was found that is used out of this call in a comparison: <strong><code>0x616CD31A</code></strong>. Searching for it, I only found it in a blog of a friend of mine <a href="https://darkopcodes.wordpress.com/2020/06/07/malware-analysis-qakbot-part-2/"target="_blank" rel="external nofollow noopener noreferrer"><strong>dark0pcodes</strong></a>. Based on what he says, it is a modified version of the <a href="https://github.com/jibsen/brieflz"target="_blank" rel="external nofollow noopener noreferrer"><strong>BriefLZ</strong></a> compression algorithm, which makes much more sense now.</p>
+<p><figure><a class="lightgallery" href="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png" title="Decrypt Resource Routine" data-thumbnail="/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png" data-sub-html="<h2>Decrypt Resource Routine</h2><p>Decrypt Resource Routine</p>"><img loading="lazy" src='/images/zero2auto/2024-01-20/x64dbg-decrypt-resource-routine.png' alt="Decrypt Resource Routine" height="1029" width="1058"></a><figcaption class="image-caption">Decrypt Resource Routine</figcaption>
+  </figure></p>
 <p>In order to decompress this file correctly after decrypting, we need to replace the modified bytes with the correct bytes, as added in the script found on GitHub.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>replaced_data <span style="color:#f92672">=</span> binascii<span style="color:#f92672">.</span>hexlify(decrypted_resource)<span style="color:#f92672">.</span>decode()<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;616cd31a&#34;</span>, <span style="color:#e6db74">&#34;626C7A1A&#34;</span>)
-</span></span></code></pre></div><h2 id="c2-in-the-second-stage">C2 in the Second Stage</h2>
-<p>In this subsequent phase, the approach mirrors that of the initial stage, involving encrypted resources utilizing the <strong><code>RC4</code></strong> encryption algorithm. These resources, identified by the names <strong><code>308</code></strong> and <strong><code>311</code></strong>, persist in their encrypted state. Employing an identical script for extraction, we uncover pertinent data pertaining to the campaign, along with details about the utilized IPs.</p>
-<p>For easy reference, the extracted configurations can be located <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot" target="_blank" rel="noopener noreffer "><strong>here</strong></a>.</p>
-<h2 id="iocs">IoCs</h2>
-<ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-Python" data-lang="Python"><span style="display:flex;"><span>replaced_data <span style="color:#f92672">=</span> binascii<span style="color:#f92672">.</span>hexlify(decrypted_resource)<span style="color:#f92672">.</span>decode()<span style="color:#f92672">.</span>replace(<span style="color:#e6db74">&#34;616cd31a&#34;</span>, <span style="color:#e6db74">&#34;626C7A1A&#34;</span>)</span></span></code></pre></div><h2 class="heading-element" id="c2-in-the-second-stage"><span>C2 in the Second Stage</span>
+  <a href="#c2-in-the-second-stage" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>In this subsequent phase, the approach mirrors that of the initial stage, involving encrypted resources utilizing the <strong><code>RC4</code></strong> encryption algorithm. These resources, identified by the names <strong><code>308</code></strong> and <strong><code>311</code></strong>, persist in their encrypted state. Employing an identical script for extraction, we uncover pertinent data pertaining to the campaign, along with details about the utilized IPs.</p>
+<p>For easy reference, the extracted configurations can be located <a href="https://github.com/moval0x1/Zero2Auto/tree/main/qakbot"target="_blank" rel="external nofollow noopener noreferrer"><strong>here</strong></a>.</p>
+<h2 class="heading-element" id="iocs"><span>IoCs</span>
+  <a href="#iocs" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
 <li><strong>Loader:</strong> <code>b92c0aafb4e9b0fc2b023dbb14d7e848249f29e02b0e4cd8624ce27e55c9ac4c</code></li>
 <li><strong>First Stage:</strong> <code>b3e4ad642e5e68944be3aabdfc77c6818e75778f8764448bdc80762fef2dad5b</code></li>
 <li><strong>Second Stage:</strong> <code>a9669005062b3c89146731a1fdd155f3902be2cfbb92a76b0173b61a35dd6516</code></li>
 </ul>
-<h2 id="concluding-thoughts">Concluding Thoughts</h2>
-<p>While there are numerous other aspects to explore in this second stage of Qakbot, I&rsquo;ll conclude this sample discussion here. An opportunity exists for those interested in delving deeper to uncover the encrypted communication methods employed within this sample. Perhaps in a future version, I will undertake this exploration. Thus far, my encounter with Qakbot has been a valuable learning experience, guiding me to develop two plugins for <strong>Binja</strong> <a href="https://github.com/moval0x1/BinjaExportTox64dbg" target="_blank" rel="noopener noreffer "><strong>BinjaExportTox64dbg</strong></a> and <a href="https://github.com/moval0x1/CommentsAndSymbols" target="_blank" rel="noopener noreffer "><strong>CommentsAndSymbols</strong></a>.</p>
+<h2 class="heading-element" id="concluding-thoughts"><span>Concluding Thoughts</span>
+  <a href="#concluding-thoughts" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>While there are numerous other aspects to explore in this second stage of Qakbot, I&rsquo;ll conclude this sample discussion here. An opportunity exists for those interested in delving deeper to uncover the encrypted communication methods employed within this sample. Perhaps in a future version, I will undertake this exploration. Thus far, my encounter with Qakbot has been a valuable learning experience, guiding me to develop two plugins for <strong>Binja</strong> <a href="https://github.com/moval0x1/BinjaExportTox64dbg"target="_blank" rel="external nofollow noopener noreferrer"><strong>BinjaExportTox64dbg</strong></a> and <a href="https://github.com/moval0x1/CommentsAndSymbols"target="_blank" rel="external nofollow noopener noreferrer"><strong>CommentsAndSymbols</strong></a>.</p>
 <p>Thank you for taking the time to read this! Should you have any questions or suggestions, please don&rsquo;t hesitate to reach out. Feel free to contact me at your convenience! :)</p>
 </div><div class="post-footer" id="post-footer">
-    <div class="post-info">
-        <div class="post-info-line">
-            <div class="post-info-mod">
-                <span>Updated on 2024-01-20</span>
-            </div></div>
-        <div class="post-info-line">
-            <div class="post-info-md"></div>
-            <div class="post-info-share">
-                <span><a href="javascript:void(0);" title="Share on Twitter" data-sharer="twitter" data-url="https://moval0x1.github.io/posts/qakbot-analysis/" data-title="Qakbot Analysis" data-via="moval0x1" data-hashtags="Zero2Auto,Malware,Reversing"><i class="fab fa-twitter fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://moval0x1.github.io/posts/qakbot-analysis/"><i class="fab fa-linkedin fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Hacker News" data-sharer="hackernews" data-url="https://moval0x1.github.io/posts/qakbot-analysis/" data-title="Qakbot Analysis"><i class="fab fa-hacker-news fa-fw" aria-hidden="true"></i></a><a href="javascript:void(0);" title="Share on Reddit" data-sharer="reddit" data-url="https://moval0x1.github.io/posts/qakbot-analysis/"><i class="fab fa-reddit fa-fw" aria-hidden="true"></i></a></span>
-            </div>
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2024-01-20 14:59:04">Updated on 2024-01-20&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="Share on X" data-sharer="twitter" data-url="https://moval0x1.github.io/posts/qakbot-analysis/" data-title="Qakbot Analysis" data-via="moval0x1" data-hashtags="Zero2Auto,Malware,Reversing"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://moval0x1.github.io/posts/qakbot-analysis/" data-hashtag="Zero2Auto"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://moval0x1.github.io/posts/qakbot-analysis/"><i class="fa-brands fa-linkedin fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://moval0x1.github.io/posts/qakbot-analysis/" data-title="Qakbot Analysis" data-web><i class="fa-brands fa-whatsapp fa-fw" aria-hidden="true"></i></a>
+  </span>
         </div>
-    </div>
+      </div></div>
 
-    <div class="post-info-more">
-        <section class="post-tags"><i class="fas fa-tags fa-fw" aria-hidden="true"></i>&nbsp;<a href="/tags/zero2auto/">Zero2Auto</a>,&nbsp;<a href="/tags/malware/">Malware</a>,&nbsp;<a href="/tags/reversing/">Reversing</a></section>
-        <section>
-            <span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
-        </section>
-    </div>
-
-    <div class="post-nav"><a href="/posts/zero2auto-custom-sample-part-2/" class="prev" rel="prev" title="Zero 2 Auto Custom sample - Part 2"><i class="fas fa-angle-left fa-fw" aria-hidden="true"></i>Zero 2 Auto Custom sample - Part 2</a>
-            <a href="/posts/the-abuse-of-exception-handlers/" class="next" rel="next" title="The Abuse of Exception Handlers">The Abuse of Exception Handlers<i class="fas fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/zero2auto/" class="post-tag" title="Tags - Zero2Auto">Zero2Auto</a><a href="/tags/malware/" class="post-tag" title="Tags - Malware">Malware</a><a href="/tags/reversing/" class="post-tag" title="Tags - Reversing">Reversing</a></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/zero2auto-custom-sample-part-2/" class="post-nav-item" rel="prev" title="Zero 2 Auto Custom Sample - Part 2"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Zero 2 Auto Custom Sample - Part 2</a><a href="/posts/the-abuse-of-exception-handlers/" class="post-nav-item" rel="next" title="The Abuse of Exception Handlers">The Abuse of Exception Handlers<i class="fa-solid fa-angle-right fa-fw" aria-hidden="true"></i></a></div>
 </div>
-<div id="comments"><div id="disqus_thread" class="comment"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://disqus.com/?ref_noscript">Disqus</a>.
-            </noscript><div id="valine" class="comment"></div><noscript>
-                Please enable JavaScript to view the comments powered by <a href="https://valine.js.org/">Valine</a>.
-            </noscript></div></article></div>
-            </main><footer class="footer">
-        <div class="footer-container"><div class="footer-line">Powered by <a href="https://gohugo.io/" target="_blank" rel="noopener noreffer" title="Hugo 0.121.2">Hugo</a> | Theme - <a href="https://github.com/dillonzq/LoveIt" target="_blank" rel="noopener noreffer" title="LoveIt 0.2.11"><i class="far fa-kiss-wink-heart fa-fw" aria-hidden="true"></i> LoveIt</a>
-                </div><div class="footer-line" itemscope itemtype="http://schema.org/CreativeWork"><i class="far fa-copyright fa-fw" aria-hidden="true"></i><span itemprop="copyrightYear">2023 - 2024</span><span class="author" itemprop="copyrightHolder">&nbsp;<a href="/" target="_blank"></a></span>&nbsp;|&nbsp;<span class="license"><a rel="license external nofollow noopener noreffer" href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank">CC BY-NC 4.0</a></span></div>
-        </div>
-    </footer></div>
+</article>
 
-        <div id="fixed-buttons"><a href="#" id="back-to-top" class="fixed-button" title="Back to Top">
-                <i class="fas fa-arrow-up fa-fw" aria-hidden="true"></i>
-            </a><a href="#" id="view-comments" class="fixed-button" title="View Comments">
-                <i class="fas fa-comment fa-fw" aria-hidden="true"></i>
-            </a>
-        </div><link rel="stylesheet" href="/lib/valine/valine.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/css/lightgallery-bundle.min.css"><script type="text/javascript" src="https://.disqus.com/embed.js" defer></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/valine@1.5.0/dist/Valine.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lazysizes@5.3.2/lazysizes.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/lightgallery.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/thumbnail/lg-thumbnail.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/lightgallery@2.5.0/plugins/zoom/lg-zoom.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clipboard@2.0.11/dist/clipboard.min.js"></script><script type="text/javascript" src="https://cdn.jsdelivr.net/npm/sharer.js@0.5.1/sharer.min.js"></script><script type="text/javascript">window.config={"code":{"copyTitle":"Copy to clipboard","maxShownLines":50},"comment":{"valine":{"appId":"QGzwQXOqs5JOhN4RGPOkR2mR-MdYXbMMI","appKey":"WBmoGyJtbqUswvfLh6L8iEBr","avatar":"mp","el":"#valine","emojiCDN":"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/","emojiMaps":{"100":"1f4af.png","alien":"1f47d.png","anger":"1f4a2.png","angry":"1f620.png","anguished":"1f627.png","astonished":"1f632.png","black_heart":"1f5a4.png","blue_heart":"1f499.png","blush":"1f60a.png","bomb":"1f4a3.png","boom":"1f4a5.png","broken_heart":"1f494.png","brown_heart":"1f90e.png","clown_face":"1f921.png","cold_face":"1f976.png","cold_sweat":"1f630.png","confounded":"1f616.png","confused":"1f615.png","cry":"1f622.png","crying_cat_face":"1f63f.png","cupid":"1f498.png","dash":"1f4a8.png","disappointed":"1f61e.png","disappointed_relieved":"1f625.png","dizzy":"1f4ab.png","dizzy_face":"1f635.png","drooling_face":"1f924.png","exploding_head":"1f92f.png","expressionless":"1f611.png","face_vomiting":"1f92e.png","face_with_cowboy_hat":"1f920.png","face_with_hand_over_mouth":"1f92d.png","face_with_head_bandage":"1f915.png","face_with_monocle":"1f9d0.png","face_with_raised_eyebrow":"1f928.png","face_with_rolling_eyes":"1f644.png","face_with_symbols_on_mouth":"1f92c.png","face_with_thermometer":"1f912.png","fearful":"1f628.png","flushed":"1f633.png","frowning":"1f626.png","ghost":"1f47b.png","gift_heart":"1f49d.png","green_heart":"1f49a.png","grimacing":"1f62c.png","grin":"1f601.png","grinning":"1f600.png","hankey":"1f4a9.png","hear_no_evil":"1f649.png","heart":"2764-fe0f.png","heart_decoration":"1f49f.png","heart_eyes":"1f60d.png","heart_eyes_cat":"1f63b.png","heartbeat":"1f493.png","heartpulse":"1f497.png","heavy_heart_exclamation_mark_ornament":"2763-fe0f.png","hole":"1f573-fe0f.png","hot_face":"1f975.png","hugging_face":"1f917.png","hushed":"1f62f.png","imp":"1f47f.png","innocent":"1f607.png","japanese_goblin":"1f47a.png","japanese_ogre":"1f479.png","joy":"1f602.png","joy_cat":"1f639.png","kiss":"1f48b.png","kissing":"1f617.png","kissing_cat":"1f63d.png","kissing_closed_eyes":"1f61a.png","kissing_heart":"1f618.png","kissing_smiling_eyes":"1f619.png","laughing":"1f606.png","left_speech_bubble":"1f5e8-fe0f.png","love_letter":"1f48c.png","lying_face":"1f925.png","mask":"1f637.png","money_mouth_face":"1f911.png","nauseated_face":"1f922.png","nerd_face":"1f913.png","neutral_face":"1f610.png","no_mouth":"1f636.png","open_mouth":"1f62e.png","orange_heart":"1f9e1.png","partying_face":"1f973.png","pensive":"1f614.png","persevere":"1f623.png","pleading_face":"1f97a.png","pouting_cat":"1f63e.png","purple_heart":"1f49c.png","rage":"1f621.png","relaxed":"263a-fe0f.png","relieved":"1f60c.png","revolving_hearts":"1f49e.png","right_anger_bubble":"1f5ef-fe0f.png","robot_face":"1f916.png","rolling_on_the_floor_laughing":"1f923.png","scream":"1f631.png","scream_cat":"1f640.png","see_no_evil":"1f648.png","shushing_face":"1f92b.png","skull":"1f480.png","skull_and_crossbones":"2620-fe0f.png","sleeping":"1f634.png","sleepy":"1f62a.png","slightly_frowning_face":"1f641.png","slightly_smiling_face":"1f642.png","smile":"1f604.png","smile_cat":"1f638.png","smiley":"1f603.png","smiley_cat":"1f63a.png","smiling_face_with_3_hearts":"1f970.png","smiling_imp":"1f608.png","smirk":"1f60f.png","smirk_cat":"1f63c.png","sneezing_face":"1f927.png","sob":"1f62d.png","space_invader":"1f47e.png","sparkling_heart":"1f496.png","speak_no_evil":"1f64a.png","speech_balloon":"1f4ac.png","star-struck":"1f929.png","stuck_out_tongue":"1f61b.png","stuck_out_tongue_closed_eyes":"1f61d.png","stuck_out_tongue_winking_eye":"1f61c.png","sunglasses":"1f60e.png","sweat":"1f613.png","sweat_drops":"1f4a6.png","sweat_smile":"1f605.png","thinking_face":"1f914.png","thought_balloon":"1f4ad.png","tired_face":"1f62b.png","triumph":"1f624.png","two_hearts":"1f495.png","unamused":"1f612.png","upside_down_face":"1f643.png","weary":"1f629.png","white_frowning_face":"2639-fe0f.png","white_heart":"1f90d.png","wink":"1f609.png","woozy_face":"1f974.png","worried":"1f61f.png","yawning_face":"1f971.png","yellow_heart":"1f49b.png","yum":"1f60b.png","zany_face":"1f92a.png","zipper_mouth_face":"1f910.png","zzz":"1f4a4.png"},"enableQQ":false,"highlight":true,"lang":"en","pageSize":10,"placeholder":"Your comment ...","recordIP":true,"serverURLs":"https://leancloud.hugoloveit.com","visitor":true}},"lightgallery":true};</script><script type="text/javascript" src="/js/theme.min.js"></script></body>
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.152.2"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.0-alpha.2-20251023040336-063af2cd"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2025</span><span class="author" itemprop="copyrightHolder">
+              <a href="/about">moval0x1</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/lightgallery/lightgallery.min.js" defer></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js" defer></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/posts/qakbot-analysis/config/page.js" defer></script><script src="/js/theme.min.js" defer></script></body>
 </html>

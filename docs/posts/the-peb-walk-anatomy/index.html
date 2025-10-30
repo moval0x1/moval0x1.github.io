@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html itemscope itemtype="http://schema.org/WebPage" lang="en-us">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+    <meta name="robots" content="noodp" />
+    <title>The PEB Walk Anatomy - The Reverser&#39;s Draft</title><meta name="author" content="moval0x1">
+<meta name="description" content="Practical Techniques for Shellcode &amp; Reversing"><meta name="keywords" content='Malware, Reversing, Shellcode, Windows Internals'>
+  <meta itemprop="name" content="The PEB Walk Anatomy">
+  <meta itemprop="description" content="Practical Techniques for Shellcode &amp; Reversing">
+  <meta itemprop="datePublished" content="2025-10-30T09:20:28-03:00">
+  <meta itemprop="dateModified" content="2025-10-30T09:20:28-03:00">
+  <meta itemprop="wordCount" content="3006">
+  <meta itemprop="image" content="https://moval0x1.github.io/logo.png">
+  <meta itemprop="keywords" content="Malware,Reversing,Shellcode,Windows Internals"><meta property="og:url" content="https://moval0x1.github.io/posts/the-peb-walk-anatomy/">
+  <meta property="og:site_name" content="The Reverser&#39;s Draft">
+  <meta property="og:title" content="The PEB Walk Anatomy">
+  <meta property="og:description" content="Practical Techniques for Shellcode &amp; Reversing">
+  <meta property="og:locale" content="en_us">
+  <meta property="og:type" content="article">
+    <meta property="article:section" content="posts">
+    <meta property="article:published_time" content="2025-10-30T09:20:28-03:00">
+    <meta property="article:modified_time" content="2025-10-30T09:20:28-03:00">
+    <meta property="article:tag" content="Malware">
+    <meta property="article:tag" content="Reversing">
+    <meta property="article:tag" content="Shellcode">
+    <meta property="article:tag" content="Windows Internals">
+    <meta property="og:image" content="https://moval0x1.github.io/logo.png">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="https://moval0x1.github.io/logo.png">
+  <meta name="twitter:title" content="The PEB Walk Anatomy">
+  <meta name="twitter:description" content="Practical Techniques for Shellcode &amp; Reversing">
+      <meta name="twitter:site" content="@moval0x1">
+<meta name="twitter:creator" content="@moval0x1" /><meta name="application-name" content="FixIt">
+<meta name="apple-mobile-web-app-title" content="FixIt"><meta name="theme-color" data-light="#f8f8f8" data-dark="#252627" content="#f8f8f8"><meta name="msapplication-TileColor" content="#da532c"><link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"><link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png"><link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5"><link rel="canonical" type="text/html" href="https://moval0x1.github.io/posts/the-peb-walk-anatomy/" title="The PEB Walk Anatomy - The Reverser&#39;s Draft" /><link rel="prev" type="text/html" href="https://moval0x1.github.io/about/" title="About" /><link rel="stylesheet" href="/css/config.min.css"><link rel="stylesheet" href="/css/style.min.css"><link rel="preload" href="/lib/fontawesome-free/all.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/fontawesome-free/all.min.css"></noscript><link rel="preload" href="/lib/animate/animate.min.css" as="style" onload="this.removeAttribute('onload');this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/lib/animate/animate.min.css"></noscript><script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "BlogPosting",
+    "headline": "The PEB Walk Anatomy",
+    "inLanguage": "en-us",
+    "mainEntityOfPage": {
+      "@type": "WebPage",
+      "@id": "https:\/\/moval0x1.github.io\/posts\/the-peb-walk-anatomy\/"
+    },"image": [{
+              "@type": "ImageObject",
+              "url": "https:\/\/moval0x1.github.io\/images\/profile.jpg",
+              "width":  457 ,
+              "height":  457 
+            }],"genre": "posts","keywords": "Malware, Reversing, Shellcode, Windows Internals","wordcount":  3006 ,
+    "url": "https:\/\/moval0x1.github.io\/posts\/the-peb-walk-anatomy\/","datePublished": "2025-10-30T09:20:28-03:00","dateModified": "2025-10-30T09:20:28-03:00","publisher": {
+      "@type": "Organization",
+      "name": ""},"author": {
+        "@type": "Person",
+        "name": "moval0x1"
+      },"description": "Practical Techniques for Shellcode \u0026 Reversing"
+  }
+  </script><script src="/js/head/color-scheme.min.js"></script></head>
+  <body data-header-desktop="sticky" data-header-mobile="auto"><div class="wrapper" data-page-style="normal"><header class="desktop animate__faster" id="header-desktop">
+  <div class="header-wrapper">
+    <div class="header-title">
+      <a href="/" title="The Reverser&#39;s Draft"><span class="header-title-text">The Reverser&#39;s Draft</span></a><span class="typeit header-subtitle"><template>Coding &amp; Malware &amp; Reverse Engineering</template></span></div>
+    <nav>
+      <ul class="menu"><li class="menu-item">
+              <a class="menu-link" href="/posts/"><i class="fa-solid fa-file-lines fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li class="menu-item">
+              <a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item">
+              <a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item">
+              <a class="menu-link" href="/about/"><i class="fa-solid fa-solid fa-user fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title="Switch Theme">
+          <i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i>
+        </li></ul>
+    </nav>
+  </div>
+</header><header class="mobile animate__faster" id="header-mobile">
+  <div class="header-container">
+    <div class="header-wrapper">
+      <div class="header-title">
+        <a href="/" title="The Reverser&#39;s Draft"><span class="header-title-text">The Reverser&#39;s Draft</span></a><span class="typeit header-subtitle"><template>Coding &amp; Malware &amp; Reverse Engineering</template></span></div>
+      <div class="menu-toggle" id="menu-toggle-mobile">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+    <nav>
+      <ul class="menu" id="menu-mobile"><li class="menu-item"><a class="menu-link" href="/posts/"><i class="fa-solid fa-file-lines fa-fw fa-sm" aria-hidden="true"></i> Posts</a></li><li class="menu-item"><a class="menu-link" href="/categories/"><i class="fa-solid fa-folder-tree fa-fw fa-sm" aria-hidden="true"></i> Categories</a></li><li class="menu-item"><a class="menu-link" href="/tags/"><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden="true"></i> Tags</a></li><li class="menu-item"><a class="menu-link" href="/about/"><i class="fa-solid fa-solid fa-user fa-fw fa-sm" aria-hidden="true"></i> About</a></li><li class="menu-item menu-system">
+          <span class="menu-system-item theme-switch" title="Switch Theme"><i class="fa-solid fa-adjust fa-fw" aria-hidden="true"></i></span></li>
+      </ul>
+    </nav>
+  </div>
+</header><main class="fi-container"><aside class="aside-collection animate__animated animate__fadeIn animate__faster" aria-label="Collections"></aside>
+
+  <article class="page single">
+    <div class="header"><h1 class="single-title animate__animated animate__flipInX"><span>The PEB Walk Anatomy</span>
+      </h1></div><div class="post-meta">
+      <div class="post-meta-line"><span class="post-author"><a href="/about" title="Author" rel=" author" class="author"><img class="avatar" src='/images/profile.jpg' alt="moval0x1" height="16" width="16">&nbsp;moval0x1</a></span><span class="post-included-in">&nbsp;included in <a href="/categories/reversing/" class="post-category" title="Category - Reversing"><i class="fa-regular fa-folder fa-fw" aria-hidden="true"></i> Reversing</a></span></div><div class="post-meta-line"><span title="published on 2025-10-30 09:20:28"><i class="fa-solid fa-calendar-days fa-fw me-1" aria-hidden="true"></i><time datetime="2025-10-30">2025-10-30</time></span>&nbsp;<span title="3006 words"><i class="fa-solid fa-pencil-alt fa-fw me-1" aria-hidden="true"></i>About 3100 words</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw me-1" aria-hidden="true"></i>15 minutes</span>&nbsp;</div>
+    </div><div class="details toc" id="toc-static" data-kept="false">
+        <div class="details-summary toc-title">
+          <span>Contents</span>
+          <span><i class="details-icon fa-solid fa-angle-right" aria-hidden="true"></i></span>
+        </div>
+        <div class="details-content toc-content" id="toc-content-static"><nav id="TableOfContents">
+  <ul>
+    <li><a href="#intro--motivation">Intro &amp; Motivation</a></li>
+    <li><a href="#understanding-the-peb-structure">Understanding the PEB Structure</a>
+      <ul>
+        <li><a href="#memory-layout-visualization">Memory Layout Visualization</a></li>
+      </ul>
+    </li>
+    <li><a href="#peb-walk---detailed-offset-navigation-x86--x64">PEB Walk - Detailed Offset Navigation (x86 / x64)</a>
+      <ul>
+        <li><a href="#step-1-get-peb-from-teb">Step 1: Get PEB from TEB</a></li>
+        <li><a href="#step-2-peb-structure-offsets">Step 2: PEB Structure Offsets</a></li>
+        <li><a href="#step-3-peb_ldr_data-structure">Step 3: PEB_LDR_DATA Structure</a></li>
+        <li><a href="#step-4-ldr_data_table_entry-offsets-the-essentials">Step 4: LDR_DATA_TABLE_ENTRY offsets (the essentials)</a></li>
+        <li><a href="#step-5-unicode_string-structure">Step 5: UNICODE_STRING Structure</a></li>
+      </ul>
+    </li>
+    <li><a href="#example-navigation-code">Example Navigation Code</a>
+      <ul>
+        <li><a href="#x86-assembly">x86 Assembly</a></li>
+        <li><a href="#x64-assembly">x64 Assembly</a></li>
+      </ul>
+    </li>
+    <li><a href="#pe-headers--export-directory-offset-map">PE Headers &amp; Export Directory (offset map)</a>
+      <ul>
+        <li><a href="#step-1-dos-header">Step 1: DOS Header</a></li>
+        <li><a href="#step-2-nt-headers">Step 2: NT Headers</a></li>
+        <li><a href="#step-3-optional-header--data-directories">Step 3: Optional Header &amp; Data Directories</a></li>
+        <li><a href="#step-4-export-directory">Step 4: Export Directory</a></li>
+        <li><a href="#step-5-export-arrays">Step 5: Export Arrays</a></li>
+      </ul>
+    </li>
+    <li><a href="#compact-find-kernel32-base-examples">Compact &ldquo;Find kernel32 base&rdquo; examples</a>
+      <ul>
+        <li><a href="#x86-assembly-skip-exe-and-ntdll">x86 assembly (skip EXE and ntdll)</a></li>
+        <li><a href="#x64-assembly-same-idea">x64 assembly (same idea)</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-offsets">The Offsets</a>
+      <ul>
+        <li><a href="#teb-thread-environment-block">TEB (Thread Environment Block)</a></li>
+        <li><a href="#peb-process-environment-block">PEB (Process Environment Block)</a></li>
+        <li><a href="#peb_ldr_data">PEB_LDR_DATA</a></li>
+        <li><a href="#ldr_data_table_entry-essentials">LDR_DATA_TABLE_ENTRY (essentials)</a></li>
+        <li><a href="#list_entry">LIST_ENTRY</a></li>
+      </ul>
+    </li>
+    <li><a href="#the-anatomy-of-a-cobaltstrike-sample">The Anatomy of a CobaltStrike sample</a>
+      <ul>
+        <li><a href="#malcat">Malcat</a>
+          <ul>
+            <li><a href="#peb_walking-commented-func">PEB_Walking commented func</a></li>
+          </ul>
+        </li>
+        <li><a href="#the-runtime-validation">The Runtime Validation</a></li>
+      </ul>
+    </li>
+    <li><a href="#just-some-final-words">Just Some Final Words</a></li>
+    <li><a href="#references">References</a></li>
+  </ul>
+</nav></div>
+      </div><div class="content" id="content"><h2 class="heading-element" id="intro--motivation"><span>Intro &amp; Motivation</span>
+  <a href="#intro--motivation" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>The Process Environment Block (PEB) is a user-mode data structure created by the Windows kernel for each process in the NT family of operating systems. It stores process-wide state used by ntdll/user32/loader internals — things like a pointer to the list of loaded modules, process startup parameters, and a BeingDebugged flag. The PEB is not a public, stable Windows API — Microsoft documents only a few fields (and warns that the layout may change). Still, the structure has been studied extensively by researchers and reverse engineers because it is accessible from user mode and contains the module lists that shellcode and malware often rely on.</p>
+<p>Shellcodes run in a constrained environment (no imports available, position independence, small size), authors commonly locate module bases and resolve API addresses by walking the PEB and then parsing the PE export table of a DLL (e.g., kernel32/ntdll) instead of calling <strong>LoadLibrary</strong>/<strong>GetProcAddress</strong>. This technique is often called <strong>PEB walking</strong> and is widely used in shellcode and advanced loaders.</p>
+<p>Currently, we have many C2 frameworks where we often encounter <strong>PEB Walking</strong> implementations such as <a href="https://www.cobaltstrike.com/"target="_blank" rel="external nofollow noopener noreferrer"><strong>CobaltStrike</strong></a>, <a href="https://www.metasploit.com/"target="_blank" rel="external nofollow noopener noreferrer"><strong>Metasploit</strong></a>, <a href="https://bruteratel.com/"target="_blank" rel="external nofollow noopener noreferrer"><strong>Brute Ratel C4</strong></a>, and <a href="https://havocframework.com/"target="_blank" rel="external nofollow noopener noreferrer"><strong>Havoc</strong></a>, among others. Understanding this technique helps you avoid wasting time and ensure the efficiency of your future analyses and code.</p>
+<h2 class="heading-element" id="understanding-the-peb-structure"><span>Understanding the PEB Structure</span>
+  <a href="#understanding-the-peb-structure" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="memory-layout-visualization"><span>Memory Layout Visualization</span>
+  <a href="#memory-layout-visualization" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>Using the layout visualization below, we can demystify the PEB Walk concept and focus on the offsets. When you are analyzing something like this, you&rsquo;ll probably see assembly code and offsets, but before digging into the offsets, let me show you, in a big-picture sense, how it would work internally.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/windbg-peb.png" title="windbg !peb" data-thumbnail="/images/pebwalk/windbg-peb.png" data-sub-html="<h2>Windbg !peb</h2><p>windbg !peb</p>"><img loading="lazy" src='/images/pebwalk/windbg-peb.png' alt="Windbg !peb" height="609" width="1318"></a><figcaption class="image-caption">windbg !peb</figcaption>
+  </figure></p>
+<h2 class="heading-element" id="peb-walk---detailed-offset-navigation-x86--x64"><span>PEB Walk - Detailed Offset Navigation (x86 / x64)</span>
+  <a href="#peb-walk---detailed-offset-navigation-x86--x64" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="step-1-get-peb-from-teb"><span>Step 1: Get PEB from TEB</span>
+  <a href="#step-1-get-peb-from-teb" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>x86 (32-bit):
+  MOV EAX, FS:[0x30]  ; TEB.ProcessEnvironmentBlock
+; EAX = PEB
+
+x64 (64-bit):
+  MOV RAX, GS:[0x60]  ; TEB.ProcessEnvironmentBlock
+; EAX = PEB</code></pre><h3 class="heading-element" id="step-2-peb-structure-offsets"><span>Step 2: PEB Structure Offsets</span>
+  <a href="#step-2-peb-structure-offsets" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>These core fields are stable across versions and safe to rely on for a loader walk.</p>
+<pre tabindex="0"><code>PEB:
+  +0x02  BYTE  BeingDebugged
+  +0x03  BYTE  BitField
+
+x86:
+  +0x0C  PPEB_LDR_DATA Ldr
+  +0x10  PRTL_USER_PROCESS_PARAMETERS ProcessParameters
+  +0x18  PVOID SubSystemData
+  +0x1C  PVOID ProcessHeap
+
+x64:
+  +0x18  PPEB_LDR_DATA Ldr
+  +0x20  PRTL_USER_PROCESS_PARAMETERS ProcessParameters
+  +0x28  PVOID SubSystemData
+  +0x30  PVOID ProcessHeap</code></pre><h3 class="heading-element" id="step-3-peb_ldr_data-structure"><span>Step 3: PEB_LDR_DATA Structure</span>
+  <a href="#step-3-peb_ldr_data-structure" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>PEB_LDR_DATA:
+  +0x00  ULONG  Length
+  +0x04  BOOLEAN Initialized
+  +0x08  HANDLE SsHandle
+
+x86:
+  +0x0C  LIST_ENTRY InLoadOrderModuleList
+  +0x14  LIST_ENTRY InMemoryOrderModuleList
+  +0x1C  LIST_ENTRY InInitializationOrderModuleList
+
+x64:
+  +0x10  LIST_ENTRY InLoadOrderModuleList
+  +0x20  LIST_ENTRY InMemoryOrderModuleList
+  +0x30  LIST_ENTRY InInitializationOrderModuleList</code></pre><h3 class="heading-element" id="step-4-ldr_data_table_entry-offsets-the-essentials"><span>Step 4: LDR_DATA_TABLE_ENTRY offsets (the essentials)</span>
+  <a href="#step-4-ldr_data_table_entry-offsets-the-essentials" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>These are the fields you actually need for a PEB walk. Many other fields exist and can shift between versions; avoid depending on them.</p>
+<pre tabindex="0"><code>x86:
+  +0x00  LIST_ENTRY InLoadOrderLinks      ; 8 bytes
+  +0x08  LIST_ENTRY InMemoryOrderLinks    ; 8 bytes
+  +0x10  LIST_ENTRY InInitializationOrderLinks ; 8 bytes
+  +0x18  PVOID       DllBase
+  +0x1C  PVOID       EntryPoint
+  +0x20  ULONG       SizeOfImage
+  +0x24  UNICODE_STRING FullDllName      ; 8 bytes (x86 UNICODE_STRING)
+  +0x2C  UNICODE_STRING BaseDllName      ; 8 bytes
+
+x64:
+  +0x00  LIST_ENTRY InLoadOrderLinks      ; 16 bytes
+  +0x10  LIST_ENTRY InMemoryOrderLinks    ; 16 bytes
+  +0x20  LIST_ENTRY InInitializationOrderLinks ; 16 bytes
+  +0x30  PVOID       DllBase
+  +0x38  PVOID       EntryPoint
+  +0x40  ULONG       SizeOfImage
+  +0x48  UNICODE_STRING FullDllName      ; 16 bytes (x64 UNICODE_STRING)
+  +0x58  UNICODE_STRING BaseDllName      ; 16 bytes
+  ; Following fields (Flags, LoadCount, TlsIndex, etc.) are version-sensitive.</code></pre><h3 class="heading-element" id="step-5-unicode_string-structure"><span>Step 5: UNICODE_STRING Structure</span>
+  <a href="#step-5-unicode_string-structure" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>x86 (8 bytes total):
+  +0x00 USHORT Length
+  +0x02 USHORT MaximumLength
+  +0x04 PWSTR  Buffer
+
+x64 (16 bytes total):
+  +0x00 USHORT Length
+  +0x02 USHORT MaximumLength
+  +0x08 PWSTR  Buffer   ; 4 bytes of padding between 0x02 and 0x08</code></pre><h2 class="heading-element" id="example-navigation-code"><span>Example Navigation Code</span>
+  <a href="#example-navigation-code" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="x86-assembly"><span>x86 Assembly</span>
+  <a href="#x86-assembly" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#75715e">; EAX = PEB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">fs</span>:[<span style="color:#ae81ff">0x30</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; EAX = PEB-&gt;Ldr
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">eax</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x0C</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; EAX = &amp;PEB_LDR_DATA.InLoadOrderModuleList (list head)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">lea</span>     <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">eax</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x0C</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; ECX = Flink (first entry)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">ecx</span>, [<span style="color:#66d9ef">eax</span>]                 <span style="color:#75715e">; ECX -&gt; InLoadOrderLinks of first module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Get DllBase of that entry:
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">; InLoadOrderLinks is at +0x00 of LDR_DATA_TABLE_ENTRY,
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">; so entry_base = curr - offsetof(InLoadOrderLinks) == curr
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e">; DllBase at +0x18
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">edx</span>, [<span style="color:#66d9ef">ecx</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x18</span>]          <span style="color:#75715e">; EDX = DllBase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Iterate: ECX = ECX-&gt;Flink
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">ecx</span>, [<span style="color:#66d9ef">ecx</span>]                 <span style="color:#960050;background-color:#1e0010">;</span> <span style="color:#66d9ef">next</span></span></span></code></pre></div><h3 class="heading-element" id="x64-assembly"><span>x64 Assembly</span>
+  <a href="#x64-assembly" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#75715e">; RAX = PEB
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">gs</span>:[<span style="color:#ae81ff">0x60</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; RAX = PEB-&gt;Ldr
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">rax</span>, [<span style="color:#66d9ef">rax</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x18</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; RDX = &amp;PEB_LDR_DATA.InLoadOrderModuleList (list head)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">lea</span>     <span style="color:#66d9ef">rdx</span>, [<span style="color:#66d9ef">rax</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x10</span>]
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; RCX = Flink (first entry)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">rdx</span>]                 <span style="color:#75715e">; RCX -&gt; InLoadOrderLinks of first module
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; RBX = DllBase (at +0x30)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">rbx</span>, [<span style="color:#66d9ef">rcx</span> <span style="color:#960050;background-color:#1e0010">+</span> <span style="color:#ae81ff">0x30</span>]          <span style="color:#75715e">; RBX = DllBase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e">; Iterate: RCX = RCX-&gt;Flink
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">mov</span>     <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">rcx</span>]</span></span></code></pre></div><h2 class="heading-element" id="pe-headers--export-directory-offset-map"><span>PE Headers &amp; Export Directory (offset map)</span>
+  <a href="#pe-headers--export-directory-offset-map" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="step-1-dos-header"><span>Step 1: DOS Header</span>
+  <a href="#step-1-dos-header" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>Base + 0x00  IMAGE_DOS_HEADER
+Base + 0x3C  DWORD e_lfanew  (RVA of NT headers)</code></pre><h3 class="heading-element" id="step-2-nt-headers"><span>Step 2: NT Headers</span>
+  <a href="#step-2-nt-headers" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>nt = Base + *(DWORD*)(Base + 0x3C)
+nt + 0x00  DWORD Signature &#34;PE\0\0&#34;
+nt + 0x04  IMAGE_FILE_HEADER (20 bytes)
+nt + 0x18  IMAGE_OPTIONAL_HEADER (x86: 224 bytes, x64: 240 bytes)</code></pre><h3 class="heading-element" id="step-3-optional-header--data-directories"><span>Step 3: Optional Header &amp; Data Directories</span>
+  <a href="#step-3-optional-header--data-directories" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>opt = nt + 0x18
+
+x86: opt + 0x60  -&gt; DataDirectory[16]
+x64: opt + 0x70  -&gt; DataDirectory[16]
+
+Export Directory entry is index 0 (8 bytes per entry):
+  +0x00  DWORD VirtualAddress (RVA)
+  +0x04  DWORD Size</code></pre><h3 class="heading-element" id="step-4-export-directory"><span>Step 4: Export Directory</span>
+  <a href="#step-4-export-directory" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>export_rva = DataDirectory[0].VirtualAddress
+exp = Base + export_rva   ; IMAGE_EXPORT_DIRECTORY (40 bytes)
+
+exp + 0x1C  DWORD AddressOfFunctions   (RVA to EAT)
+exp + 0x20  DWORD AddressOfNames       (RVA to name RVAs)
+exp + 0x24  DWORD AddressOfNameOrdinals(RVA to WORD ords)</code></pre><h3 class="heading-element" id="step-5-export-arrays"><span>Step 5: Export Arrays</span>
+  <a href="#step-5-export-arrays" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>funcs = Base + *(DWORD*)(exp + 0x1C)         ; DWORD RVAs
+names = Base + *(DWORD*)(exp + 0x20)         ; DWORD RVAs (to ASCII)
+ords  = Base + *(DWORD*)(exp + 0x24)         ; WORD ordinals
+
+func_rva  = *(DWORD*)(funcs + idx*4)
+name_rva  = *(DWORD*)(names + idx*4)
+ordinal   = *(WORD*)(ords  + idx*2)</code></pre><h2 class="heading-element" id="compact-find-kernel32-base-examples"><span>Compact &ldquo;Find kernel32 base&rdquo; examples</span>
+  <a href="#compact-find-kernel32-base-examples" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><h3 class="heading-element" id="x86-assembly-skip-exe-and-ntdll"><span>x86 assembly (skip EXE and ntdll)</span>
+  <a href="#x86-assembly-skip-exe-and-ntdll" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>mov     eax, fs:[0x30]         ; PEB
+mov     eax, [eax + 0x0C]      ; PEB-&gt;Ldr
+mov     esi, [eax + 0x0C]      ; Ldr.InLoadOrderModuleList.Flink (EXE)
+mov     eax, [esi]             ; ntdll (2nd)
+mov     eax, [eax]             ; kernel32 (3rd)
+; eax -&gt; InLoadOrderLinks for kernel32&#39;s LDR_DATA_TABLE_ENTRY
+mov     ebx, [eax + 0x18]      ; EBX = kernel32.DllBase</code></pre><h3 class="heading-element" id="x64-assembly-same-idea"><span>x64 assembly (same idea)</span>
+  <a href="#x64-assembly-same-idea" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><pre tabindex="0"><code>mov     rax, gs:[0x60]         ; PEB
+mov     rax, [rax + 0x18]      ; PEB-&gt;Ldr
+mov     rsi, [rax + 0x10]      ; Ldr.InLoadOrderModuleList.Flink (EXE)
+mov     rax, [rsi]             ; ntdll (2nd)
+mov     rax, [rax]             ; kernel32 (3rd)
+mov     rbx, [rax + 0x30]      ; RBX = kernel32.DllBase</code></pre><h2 class="heading-element" id="the-offsets"><span>The Offsets</span>
+  <a href="#the-offsets" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>Here we are mapping not only the PEB offsets, but also the PE offsets, which are used together, and it is good to know what each field means.</p>
+<h3 class="heading-element" id="teb-thread-environment-block"><span>TEB (Thread Environment Block)</span>
+  <a href="#teb-thread-environment-block" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>x86</th>
+          <th>x64</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>PPEB Peb</strong></td>
+          <td>Pointer to Process Environment Block</td>
+          <td>0x30</td>
+          <td>0x60</td>
+      </tr>
+  </tbody>
+</table>
+<h3 class="heading-element" id="peb-process-environment-block"><span>PEB (Process Environment Block)</span>
+  <a href="#peb-process-environment-block" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>x86</th>
+          <th>x64</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>BYTE BeingDebugged</strong></td>
+          <td>Debug flag</td>
+          <td>0x02</td>
+          <td>0x02</td>
+      </tr>
+      <tr>
+          <td><strong>PPEB_LDR_DATA Ldr</strong></td>
+          <td>Loader data</td>
+          <td>0x0C</td>
+          <td>0x18</td>
+      </tr>
+  </tbody>
+</table>
+<h3 class="heading-element" id="peb_ldr_data"><span>PEB_LDR_DATA</span>
+  <a href="#peb_ldr_data" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>x86</th>
+          <th>x64</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>LIST_ENTRY InLoadOrderModuleList</strong></td>
+          <td>Modules in load order</td>
+          <td>0x0C</td>
+          <td>0x10</td>
+      </tr>
+      <tr>
+          <td><strong>LIST_ENTRY InMemoryOrderModuleList</strong></td>
+          <td>Modules in memory order</td>
+          <td>0x14</td>
+          <td>0x20</td>
+      </tr>
+      <tr>
+          <td><strong>LIST_ENTRY InInitOrderModuleList</strong></td>
+          <td>Modules in init order</td>
+          <td>0x1C</td>
+          <td>0x30</td>
+      </tr>
+  </tbody>
+</table>
+<h3 class="heading-element" id="ldr_data_table_entry-essentials"><span>LDR_DATA_TABLE_ENTRY (essentials)</span>
+  <a href="#ldr_data_table_entry-essentials" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>x86</th>
+          <th>x64</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>InLoadOrderLinks</strong></td>
+          <td>List entry (anchor)</td>
+          <td>0x00</td>
+          <td>0x00</td>
+      </tr>
+      <tr>
+          <td><strong>InMemoryOrderLinks</strong></td>
+          <td></td>
+          <td>0x08</td>
+          <td>0x10</td>
+      </tr>
+      <tr>
+          <td><strong>InInitializationOrderLinks</strong></td>
+          <td></td>
+          <td>0x10</td>
+          <td>0x20</td>
+      </tr>
+      <tr>
+          <td><strong>PVOID DllBase</strong></td>
+          <td>Module base</td>
+          <td>0x18</td>
+          <td>0x30</td>
+      </tr>
+      <tr>
+          <td><strong>PVOID EntryPoint</strong></td>
+          <td>Entry point</td>
+          <td>0x1C</td>
+          <td>0x38</td>
+      </tr>
+      <tr>
+          <td><strong>ULONG SizeOfImage</strong></td>
+          <td>Image size</td>
+          <td>0x20</td>
+          <td>0x40</td>
+      </tr>
+      <tr>
+          <td><strong>UNICODE_STRING FullDllName</strong></td>
+          <td>Full path</td>
+          <td>0x24</td>
+          <td>0x48</td>
+      </tr>
+      <tr>
+          <td><strong>UNICODE_STRING BaseDllName</strong></td>
+          <td>File name</td>
+          <td>0x2C</td>
+          <td>0x58</td>
+      </tr>
+  </tbody>
+</table>
+<h3 class="heading-element" id="list_entry"><span>LIST_ENTRY</span>
+  <a href="#list_entry" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><table>
+  <thead>
+      <tr>
+          <th>Field</th>
+          <th>Description</th>
+          <th>x86</th>
+          <th>x64</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td><strong>Flink</strong></td>
+          <td>forward link</td>
+          <td>0x00</td>
+          <td>0x00</td>
+      </tr>
+      <tr>
+          <td><strong>Blink</strong></td>
+          <td>back link</td>
+          <td>0x04</td>
+          <td>0x08</td>
+      </tr>
+  </tbody>
+</table>
+<h2 class="heading-element" id="the-anatomy-of-a-cobaltstrike-sample"><span>The Anatomy of a CobaltStrike sample</span>
+  <a href="#the-anatomy-of-a-cobaltstrike-sample" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>I grabbed a sample from <a href="https://bazaar.abuse.ch/sample/d7d58cc400789cd519a9fce6347907f1cc6fc0e620f2ad844638ed2e8ac547f8/"target="_blank" rel="external nofollow noopener noreferrer"><strong>MalwareBazaar</strong></a> in order to analyze a real case of malicious code using PEB Walk and then be able to rename and understand the fields based on the offsets and above. Let&rsquo;s do it! ;)</p>
+<h3 class="heading-element" id="malcat"><span>Malcat</span>
+  <a href="#malcat" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>To those who are interested in an amazing reversing tool - I might say, <em>indispensable</em>. I show you <a href="https://malcat.fr/index.html"target="_blank" rel="external nofollow noopener noreferrer"><strong>Malcat</strong></a>, according to the website.</p>
+<blockquote>
+<p>Malcat is a feature-rich hexadecimal editor / disassembler for Windows and Linux targeted to IT-security professionals.
+Inspect more than 50 binary file formats, disassemble and decompile different CPU architectures, extract embedded files and scan for Yara signatures or anomalies in a fast and easy-to-use graphical interface.
+Don&rsquo;t like what you get? Malcat is also heavily customizable and scriptable using python.</p>
+</blockquote>
+<p>Among all the delightful features found in Malcat, we need just take a look at the left panel, as shown in the image below, to see the <strong>PEBx64</strong> being highlighted.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/malcat-data-panel.png" title="Malcat left data panel" data-thumbnail="/images/pebwalk/malcat-data-panel.png" data-sub-html="<h2>Malcat left data panel</h2><p>Malcat left data panel</p>"><img loading="lazy" src='/images/pebwalk/malcat-data-panel.png' alt="Malcat left data panel" height="327" width="315"></a><figcaption class="image-caption">Malcat left data panel</figcaption>
+  </figure></p>
+<p>Getting the code, we can comment it to be easy to understand before going to the x64dbg to see everything happening in runtime.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/malcat-disassembly.png" title="Malcat Disassembly" data-thumbnail="/images/pebwalk/malcat-disassembly.png" data-sub-html="<h2>Malcat Disassembly</h2><p>Malcat Disassembly</p>"><img loading="lazy" src='/images/pebwalk/malcat-disassembly.png' alt="Malcat Disassembly" height="1043" width="1338"></a><figcaption class="image-caption">Malcat Disassembly</figcaption>
+  </figure></p>
+<h4 class="heading-element" id="peb_walking-commented-func"><span>PEB_Walking commented func</span>
+  <a href="#peb_walking-commented-func" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h4><div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-asm" data-lang="asm"><span style="display:flex;"><span><span style="color:#a6e22e">peb_walking</span>() <span style="color:#960050;background-color:#1e0010">{</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sub</span>          <span style="color:#66d9ef">rsp</span>, <span style="color:#ae81ff">0x28</span>                           <span style="color:#75715e">; Allocate stack space
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; Check if already initialized
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#ae81ff">0x140005740</span>], <span style="color:#ae81ff">0x00</span>       <span style="color:#75715e">; Check initialization flag
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.18</span>                                 <span style="color:#75715e">; Skip if already done
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; === PEB TRAVERSAL TO FIND NTDLL.DLL ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">gs</span>:[<span style="color:#ae81ff">0x60</span>]                      <span style="color:#75715e">; Get PEB pointer from TEB (Thread Environment Block)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">r8d</span>, <span style="color:#66d9ef">r8d</span>                            <span style="color:#75715e">; Clear r8
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">rax</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x18</span>]                     <span style="color:#75715e">; Get PEB_LDR_DATA pointer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rdx</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>]                     <span style="color:#75715e">; Get first entry in InLoadOrderModuleList
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">rdx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x30</span>]                     <span style="color:#75715e">; Get DllBase from LDR_DATA_TABLE_ENTRY
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">test</span>         <span style="color:#66d9ef">rcx</span>, <span style="color:#66d9ef">rcx</span>                            <span style="color:#75715e">; Check if DLL base is valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.19</span>                                 <span style="color:#75715e">; Exit if null
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.1: <span style="color:#75715e">; === LOOP THROUGH LOADED MODULES ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">movsxd</span>       <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">dword</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x3C</span>]           <span style="color:#75715e">; Get e_lfanew (PE header offset)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r10</span>, <span style="color:#66d9ef">rcx</span>                            <span style="color:#75715e">; Save module base in r10
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r9d</span>, [<span style="color:#66d9ef">rax</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rcx</span>*<span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x88</span>]               <span style="color:#75715e">; Get Export Directory RVA from Optional Header
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">test</span>         <span style="color:#66d9ef">r9d</span>, <span style="color:#66d9ef">r9d</span>                            <span style="color:#75715e">; Check if exports exist
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.2</span>                                  <span style="color:#75715e">; Skip if no exports
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">r8</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">1</span>]                      <span style="color:#75715e">; r8 = Export Directory address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>]                <span style="color:#75715e">; Get Name RVA from Export Directory
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r10</span>*<span style="color:#ae81ff">1</span>]                    <span style="color:#75715e">; Read first 4 bytes of DLL name
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">or</span>           <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x20202020</span>                     <span style="color:#75715e">; Convert to lowercase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x6C64746E</span>                     <span style="color:#75715e">; Compare with &#39;ntdl&#39; (little-endian)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.2</span>                                  <span style="color:#75715e">; Not NTDLL, continue searching
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r10</span>*<span style="color:#ae81ff">1</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x04</span>]               <span style="color:#75715e">; Read next 4 bytes of DLL name
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">or</span>           <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x20202020</span>                     <span style="color:#75715e">; Convert to lowercase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x6C642E6C</span>                     <span style="color:#75715e">; Compare with &#39;l.dl&#39; (little-endian)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.3</span>                                  <span style="color:#75715e">; Found NTDLL.DLL!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.2: <span style="color:#75715e">; === MOVE TO NEXT MODULE ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rdx</span>, [<span style="color:#66d9ef">rdx</span>]                          <span style="color:#75715e">; Get next LIST_ENTRY
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">rdx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x30</span>]                     <span style="color:#75715e">; Get next DllBase
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">test</span>         <span style="color:#66d9ef">rcx</span>, <span style="color:#66d9ef">rcx</span>                            <span style="color:#75715e">; Check if valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.1</span>                                  <span style="color:#75715e">; Continue loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.3: <span style="color:#75715e">; === PROCESS NTDLL EXPORTS ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">test</span>         <span style="color:#66d9ef">r8</span>, <span style="color:#66d9ef">r8</span>                              <span style="color:#75715e">; Check if Export Directory valid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.19</span>                                 <span style="color:#75715e">; Exit if invalid
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; Save registers and setup export processing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r11d</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x18</span>]                     <span style="color:#75715e">; NumberOfNames
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x38</span>], <span style="color:#66d9ef">rbx</span>                     <span style="color:#75715e">; Save rbx
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x40</span>], <span style="color:#66d9ef">rbp</span>                     <span style="color:#75715e">; Save rbp
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ebp</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x24</span>]                      <span style="color:#75715e">; AddressOfNameOrdinals RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x20</span>], <span style="color:#66d9ef">rsi</span>                     <span style="color:#75715e">; Save rsi
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rbp</span>, <span style="color:#66d9ef">r10</span>                            <span style="color:#75715e">; Convert to VA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">esi</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x1C</span>]                      <span style="color:#75715e">; AddressOfFunctions RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x18</span>], <span style="color:#66d9ef">rdi</span>                     <span style="color:#75715e">; Save rdi
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rsi</span>, <span style="color:#66d9ef">r10</span>                            <span style="color:#75715e">; Convert to VA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">edi</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x20</span>]                      <span style="color:#75715e">; AddressOfNames RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>], <span style="color:#66d9ef">r12</span>                     <span style="color:#75715e">; Save r12
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rdi</span>, <span style="color:#66d9ef">r10</span>                            <span style="color:#75715e">; Convert to VA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>], <span style="color:#66d9ef">r14</span>                     <span style="color:#75715e">; Save r14
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">ebx</span>, <span style="color:#66d9ef">ebx</span>                            <span style="color:#75715e">; Clear ebx
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">rsp</span>], <span style="color:#66d9ef">r15</span>                          <span style="color:#75715e">; Save r15
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">r14</span>, [<span style="color:#ae81ff">0x140005740</span>]                  <span style="color:#75715e">; Load table base address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r12d</span>, <span style="color:#ae81ff">0x775A</span>                        <span style="color:#75715e">; &#39;Zw&#39; prefix check
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.4: <span style="color:#75715e">; === ENUMERATE EXPORTED FUNCTIONS ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">r11-0x01</span>]                     <span style="color:#75715e">; Index = NumberOfNames - 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r9d</span>, [<span style="color:#66d9ef">rdi</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rax</span>*<span style="color:#ae81ff">4</span>]                    <span style="color:#75715e">; Get function name RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">r9</span>, <span style="color:#66d9ef">r10</span>                             <span style="color:#75715e">; Convert to VA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          [<span style="color:#66d9ef">r9</span>], <span style="color:#66d9ef">r12w</span>                          <span style="color:#75715e">; Check if starts with &#39;Zw&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.11</span>                                 <span style="color:#75715e">; Skip if not Zw* function
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; === HASH FUNCTION NAME ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">edx</span>                            <span style="color:#75715e">; Clear edx
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r8d</span>, <span style="color:#ae81ff">0x23C08AE1</span>                     <span style="color:#75715e">; Initial hash value
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">r9</span>                             <span style="color:#75715e">; Function name pointer
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.5: <span style="color:#75715e">; === HASH CALCULATION LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">movzx</span>        <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">word</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rax</span>]                 <span style="color:#75715e">; Get character
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">r8d</span>                            <span style="color:#75715e">; Copy hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ror</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#ae81ff">0x08</span>                           <span style="color:#75715e">; Rotate right 8 bits
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">inc</span>          <span style="color:#66d9ef">edx</span>                                 <span style="color:#75715e">; Increment length
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">eax</span>                            <span style="color:#75715e">; Add character to hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">edx</span>                            <span style="color:#75715e">; Get offset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">r9</span>                             <span style="color:#75715e">; Next character position
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">r8d</span>, <span style="color:#66d9ef">ecx</span>                            <span style="color:#75715e">; XOR into hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">byte</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rax</span>], <span style="color:#ae81ff">0x00</span>                <span style="color:#75715e">; Check for null terminator
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.5</span>                                  <span style="color:#75715e">; Continue hashing
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; === STORE FUNCTION INFO ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">ebx</span>                            <span style="color:#75715e">; Copy counter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">r11-0x01</span>]                     <span style="color:#75715e">; Get index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rdx</span>, <span style="color:#66d9ef">rdx</span>                            <span style="color:#75715e">; Double for 16-byte entries
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">word</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x30</span>], <span style="color:#ae81ff">0x50F</span>          <span style="color:#75715e">; Store 0x50F (syscall pattern)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">movzx</span>        <span style="color:#66d9ef">r9d</span>, <span style="color:#66d9ef">word</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x30</span>]            <span style="color:#75715e">; Load pattern
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r15b</span>, <span style="color:#ae81ff">0xC3</span>                          <span style="color:#75715e">; RET instruction
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rdx</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>], <span style="color:#66d9ef">r8d</span>               <span style="color:#75715e">; Store hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">movzx</span>        <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">word</span> <span style="color:#66d9ef">ptr</span> [<span style="color:#66d9ef">rbp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rax</span>*<span style="color:#ae81ff">2</span>]           <span style="color:#75715e">; Get ordinal
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, [<span style="color:#66d9ef">rsi</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rax</span>*<span style="color:#ae81ff">4</span>]                    <span style="color:#75715e">; Get function RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rdx</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>], <span style="color:#66d9ef">ecx</span>               <span style="color:#75715e">; Store function RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">r8</span>, [<span style="color:#66d9ef">r10</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rcx</span>*<span style="color:#ae81ff">1</span>]                     <span style="color:#75715e">; Get function address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; === FIND SYSCALL STUB ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r9w</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x12</span>]                      <span style="color:#75715e">; Check for syscall pattern at +0x12
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">rax</span>, [<span style="color:#66d9ef">r8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x12</span>]                      <span style="color:#75715e">; Point to potential syscall
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.6</span>                                  <span style="color:#75715e">; Not found, search more
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r15b</span>, [<span style="color:#66d9ef">rax</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x02</span>]                    <span style="color:#75715e">; Check for RET after syscall
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.10</span>                                 <span style="color:#75715e">; Found syscall stub
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.6: <span style="color:#75715e">; === SEARCH FOR SYSCALL PATTERN ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#ae81ff">0x01</span>                           <span style="color:#75715e">; Start offset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.7: <span style="color:#75715e">; === SYSCALL SEARCH LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">ecx</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">shl</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x05</span>                           <span style="color:#75715e">; Multiply by 32
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">edx</span>, <span style="color:#66d9ef">eax</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#ae81ff">0x12</span>                           <span style="color:#75715e">; Offset to check
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">r8</span>                             <span style="color:#75715e">; Add to function base
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r9w</span>, [<span style="color:#66d9ef">rax</span>]                          <span style="color:#75715e">; Check for syscall pattern
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.8</span>                                  <span style="color:#75715e">; Not found
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r15b</span>, [<span style="color:#66d9ef">rax</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x02</span>]                    <span style="color:#75715e">; Check for RET
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.10</span>                                 <span style="color:#75715e">; Found!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.8: <span style="color:#75715e">; === CHECK NEGATIVE OFFSET ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">r8</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">sub</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#66d9ef">rdx</span>                            <span style="color:#75715e">; Try negative offset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rax</span>, <span style="color:#ae81ff">0x12</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r9w</span>, [<span style="color:#66d9ef">rax</span>]                          <span style="color:#75715e">; Check pattern
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.9</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r15b</span>, [<span style="color:#66d9ef">rax</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x02</span>]                    <span style="color:#75715e">; Check RET
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.10</span>                                 <span style="color:#75715e">; Found!
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.9:
+</span></span><span style="display:flex;"><span>    <span style="color:#a6e22e">inc</span>          <span style="color:#66d9ef">ecx</span>                                 <span style="color:#75715e">; Next offset
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#ae81ff">0x200</span>                          <span style="color:#75715e">; Max search limit
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jb</span>           <span style="color:#66d9ef">.7</span>                                  <span style="color:#75715e">; Continue searching
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">eax</span>                            <span style="color:#75715e">; Not found, store NULL
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.10: <span style="color:#75715e">; === STORE SYSCALL ADDRESS ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">ebx</span>                            <span style="color:#75715e">; Get index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">inc</span>          <span style="color:#66d9ef">ebx</span>                                 <span style="color:#75715e">; Increment counter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rcx</span>, <span style="color:#66d9ef">rcx</span>                            <span style="color:#75715e">; Double for entry size
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">rcx</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>], <span style="color:#66d9ef">rax</span>               <span style="color:#75715e">; Store syscall stub address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">ebx</span>, <span style="color:#ae81ff">0x258</span>                          <span style="color:#75715e">; Check max entries (600)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.12</span>                                 <span style="color:#75715e">; Done if at limit
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.11: <span style="color:#75715e">; === PROCESS NEXT FUNCTION ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">r11d</span>, <span style="color:#ae81ff">0xFFFFFFFF</span>                    <span style="color:#75715e">; Decrement NumberOfNames
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jnz</span>          <span style="color:#66d9ef">.4</span>                                  <span style="color:#75715e">; Continue if more functions
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.12: <span style="color:#75715e">; === SORT THE TABLE ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r15</span>, [<span style="color:#66d9ef">rsp</span>]                          <span style="color:#75715e">; Restore r15
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">rbx-0x01</span>]                     <span style="color:#75715e">; Get count - 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r12</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>]                     <span style="color:#75715e">; Restore r12
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">r10d</span>, <span style="color:#66d9ef">r10d</span>                          <span style="color:#75715e">; Outer loop counter = 0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rbp</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x40</span>]                     <span style="color:#75715e">; Restore rbp
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#ae81ff">0x140005740</span>], <span style="color:#66d9ef">ebx</span>                  <span style="color:#75715e">; Store entry count
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">test</span>         <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">eax</span>                            <span style="color:#75715e">; Check if entries exist
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.17</span>                                 <span style="color:#75715e">; Skip sort if empty
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.13: <span style="color:#75715e">; === BUBBLE SORT OUTER LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">ebx</span>                            <span style="color:#75715e">; Get total count
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">ecx</span>                            <span style="color:#75715e">; Inner counter = 0
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">sub</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">r10d</span>                           <span style="color:#75715e">; Subtract outer counter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x01</span>                           <span style="color:#75715e">; Check if only 1 element left
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jz</span>           <span style="color:#66d9ef">.16</span>                                 <span style="color:#75715e">; Skip inner loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.14: <span style="color:#75715e">; === BUBBLE SORT INNER LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">r11d</span>, [<span style="color:#66d9ef">rcx</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x01</span>]                    <span style="color:#75715e">; Next index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r9d</span>, <span style="color:#66d9ef">ecx</span>                            <span style="color:#75715e">; Current index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">r9</span>, <span style="color:#66d9ef">r9</span>                              <span style="color:#75715e">; Double for entry size
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r8d</span>, <span style="color:#66d9ef">r11d</span>                           <span style="color:#75715e">; Next index
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">r8</span>, <span style="color:#66d9ef">r8</span>                              <span style="color:#75715e">; Double for entry size
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; Compare RVAs
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">edi</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>]                <span style="color:#75715e">; Get current RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">esi</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>]                <span style="color:#75715e">; Get next RVA
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">edi</span>, <span style="color:#66d9ef">esi</span>                            <span style="color:#75715e">; Compare
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jbe</span>          <span style="color:#66d9ef">.15</span>                                 <span style="color:#75715e">; Skip swap if in order
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e">; === SWAP ENTRIES ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>]                <span style="color:#75715e">; Load next hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">edx</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>]                <span style="color:#75715e">; Load current hash
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rcx</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>]                <span style="color:#75715e">; Load current syscall address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>], <span style="color:#66d9ef">eax</span>                <span style="color:#75715e">; Store next hash in current
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rax</span>, [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>]                <span style="color:#75715e">; Load next syscall address
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>], <span style="color:#66d9ef">rax</span>                <span style="color:#75715e">; Store next syscall in current
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r9</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>], <span style="color:#66d9ef">esi</span>                <span style="color:#75715e">; Store next RVA in current
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>], <span style="color:#66d9ef">edx</span>                <span style="color:#75715e">; Store current hash in next
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x0C</span>], <span style="color:#66d9ef">edi</span>                <span style="color:#75715e">; Store current RVA in next
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          [<span style="color:#66d9ef">r14</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#66d9ef">r8</span>*<span style="color:#ae81ff">8</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x10</span>], <span style="color:#66d9ef">rcx</span>                <span style="color:#75715e">; Store current syscall in next
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ebx</span>, [<span style="color:#ae81ff">0x140005740</span>]                  <span style="color:#75715e">; Reload count
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.15: <span style="color:#75715e">; === CONTINUE INNER LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">ebx</span>                            <span style="color:#75715e">; Get count
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">ecx</span>, <span style="color:#66d9ef">r11d</span>                           <span style="color:#75715e">; Move to next
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">sub</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">r10d</span>                           <span style="color:#75715e">; Subtract outer counter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">dec</span>          <span style="color:#66d9ef">eax</span>                                 <span style="color:#75715e">; Decrement
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r11d</span>, <span style="color:#66d9ef">eax</span>                           <span style="color:#75715e">; Check if done with inner loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jb</span>           <span style="color:#66d9ef">.14</span>                                 <span style="color:#75715e">; Continue inner loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.16: <span style="color:#75715e">; === CONTINUE OUTER LOOP ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">inc</span>          <span style="color:#66d9ef">r10d</span>                                <span style="color:#75715e">; Increment outer counter
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">lea</span>          <span style="color:#66d9ef">eax</span>, [<span style="color:#66d9ef">rbx-0x01</span>]                     <span style="color:#75715e">; Get count - 1
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">cmp</span>          <span style="color:#66d9ef">r10d</span>, <span style="color:#66d9ef">eax</span>                           <span style="color:#75715e">; Check if done
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">jb</span>           <span style="color:#66d9ef">.13</span>                                 <span style="color:#75715e">; Continue outer loop
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.17: <span style="color:#75715e">; === RESTORE REGISTERS ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rdi</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x18</span>]                     <span style="color:#75715e">; Restore rdi
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rsi</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x20</span>]                     <span style="color:#75715e">; Restore rsi
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">rbx</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x38</span>]                     <span style="color:#75715e">; Restore rbx
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">r14</span>, [<span style="color:#66d9ef">rsp</span><span style="color:#960050;background-color:#1e0010">+</span><span style="color:#ae81ff">0x08</span>]                     <span style="color:#75715e">; Restore r14
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    
+</span></span><span style="display:flex;"><span>.18: <span style="color:#75715e">; === SUCCESS RETURN ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">mov</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#ae81ff">0x01</span>                           <span style="color:#75715e">; Return 1 (success)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rsp</span>, <span style="color:#ae81ff">0x28</span>                           <span style="color:#75715e">; Clean up stack
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ret</span>
+</span></span><span style="display:flex;"><span>    
+</span></span><span style="display:flex;"><span>.19: <span style="color:#75715e">; === FAILURE RETURN ===
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">xor</span>          <span style="color:#66d9ef">eax</span>, <span style="color:#66d9ef">eax</span>                            <span style="color:#75715e">; Return 0 (failure)
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">add</span>          <span style="color:#66d9ef">rsp</span>, <span style="color:#ae81ff">0x28</span>                           <span style="color:#75715e">; Clean up stack
+</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span>    <span style="color:#a6e22e">ret</span>
+</span></span><span style="display:flex;"><span><span style="color:#960050;background-color:#1e0010">}</span></span></span></code></pre></div><h3 class="heading-element" id="the-runtime-validation"><span>The Runtime Validation</span>
+  <a href="#the-runtime-validation" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h3><p>The first execution gets the binary name. So, to get to <code>ntdll.dll</code>, we need to iterate over the <code>LIST_ENTRY</code> to get the next <strong>DLLBase</strong>. After going to the next entry, we found that <code>ntdll.dll</code> was mapped into the current binary&rsquo;s memory, and then we can see the <code>e_lfanew</code> showed and follow the rest of the code.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/x64dbg-peb-walk-ntdll.png" title="x64dbg PEB Walk ntdll" data-thumbnail="/images/pebwalk/x64dbg-peb-walk-ntdll.png" data-sub-html="<h2>x64dbg PEB Walk ntdll</h2><p>x64dbg PEB Walk ntdll</p>"><img loading="lazy" src='/images/pebwalk/x64dbg-peb-walk-ntdll.png' alt="x64dbg PEB Walk ntdll" height="819" width="2518"></a><figcaption class="image-caption">x64dbg PEB Walk ntdll</figcaption>
+  </figure></p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/x64dbg-ntdll-memory-map.png" title="x64dbg ntdll Memory Map" data-thumbnail="/images/pebwalk/x64dbg-ntdll-memory-map.png" data-sub-html="<h2>x64dbg ntdll Memory Map</h2><p>x64dbg ntdll Memory Map</p>"><img loading="lazy" src='/images/pebwalk/x64dbg-ntdll-memory-map.png' alt="x64dbg ntdll Memory Map" height="139" width="1916"></a><figcaption class="image-caption">x64dbg ntdll Memory Map</figcaption>
+  </figure></p>
+<p>This image explains better the math used here to get the <code>Export Directory</code>. <strong>rax</strong> has the <code>e_lfanew</code> offset, which points to <code>E8</code> — as shown in the previous image. It should be summed with <strong>rcx</strong>, which points to <strong>ntdll</strong> in memory, then summed with <code>0x88</code>, and we get the <code>0x170</code> offset shown below.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/cff-export-directory-ntdll.png" title="CFF Explorer - Export Directory offset from ntdll" data-thumbnail="/images/pebwalk/cff-export-directory-ntdll.png" data-sub-html="<h2>CFF Explorer - Export Directory offset from ntdll</h2><p>CFF Explorer - Export Directory offset from ntdll</p>"><img loading="lazy" src='/images/pebwalk/cff-export-directory-ntdll.png' alt="CFF Explorer - Export Directory offset from ntdll" height="268" width="1066"></a><figcaption class="image-caption">CFF Explorer - Export Directory offset from ntdll</figcaption>
+  </figure></p>
+<p>But, wait&hellip; WTH is the <code>0x88</code> value if we knew that the <strong>PE+</strong> has <code>0x70</code>?</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/smart-thinking-guy-meme.gif" title="Smart thinking meme" data-thumbnail="/images/pebwalk/smart-thinking-guy-meme.gif" data-sub-html="<h2>Smart thinking meme</h2><p>Smart thinking meme</p>"><img loading="lazy" src='/images/pebwalk/smart-thinking-guy-meme.gif' alt="Smart thinking meme" height="498" width="498"></a><figcaption class="image-caption">Smart thinking meme</figcaption>
+  </figure></p>
+<p>Because, as shown here <a href="#step-3-optional-header-data-directories"><strong>Step 3: Optional Header &amp; Data Directories</strong></a> the value <code>0x88</code> already includes:</p>
+<ul>
+<li>the <code>4 bytes</code> for the <em>PE Signature</em> <strong>(&ldquo;PE\0\0&rdquo;)</strong></li>
+<li>the <code>0x18-bytes</code> <strong>IMAGE_FILE_HEADER</strong></li>
+<li>the <code>0x70-bytes</code> distance inside the <strong>IMAGE_OPTIONAL_HEADER</strong> to the <em>DataDirectory[0]</em></li>
+</ul>
+<p>And then we can start to see the abstract thing taking on a well-known form.</p>
+<p><figure><a class="lightgallery" href="/images/pebwalk/x64dbg-ntdll-funcs-loaded.png" title="x64dbg ntdll functions loaded" data-thumbnail="/images/pebwalk/x64dbg-ntdll-funcs-loaded.png" data-sub-html="<h2>x64dbg ntdll functions loaded</h2><p>x64dbg ntdll functions loaded</p>"><img loading="lazy" src='/images/pebwalk/x64dbg-ntdll-funcs-loaded.png' alt="x64dbg ntdll functions loaded" height="748" width="1575"></a><figcaption class="image-caption">x64dbg ntdll functions loaded</figcaption>
+  </figure></p>
+<h2 class="heading-element" id="just-some-final-words"><span>Just Some Final Words</span>
+  <a href="#just-some-final-words" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><p>There is not much more mystery around the code here, since we can look at the assembly code commented above. The idea here was to show how important it is to understand <em>offsets</em> to understand what is going on when looking at assembly code. Of course, you can use <code>IDA</code>, <code>Ghidra</code>, or <code>Binary Ninja</code> to help you in the analysis process. However, it is also good to understand what is supposed to happen based on the abstract assembly generated. Being honest, it is much more comfortable to look at <strong>shellcode</strong> or <strong>PEB Walking</strong> code now, right? Just remember to understand what is happening, and everything will go well.</p>
+<p>Thanks for reading this article. If you have any comments, feel free to reach out to me!</p>
+<h2 class="heading-element" id="references"><span>References</span>
+  <a href="#references" class="heading-mark">
+    <svg class="octicon octicon-link" viewBox="0 0 16 16" version="1.1" width="16" height="16" aria-hidden="true"><path d="m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z"></path></svg>
+  </a>
+</h2><ul>
+<li><a href="http://undocumented.ntinternals.net/index.html?page=UserMode%2FUndocumented%20Functions%2FNT%20Objects%2FProcess%2FPEB.html"target="_blank" rel="external nofollow noopener noreferrer">http://undocumented.ntinternals.net/index.html?page=UserMode%2FUndocumented%20Functions%2FNT%20Objects%2FProcess%2FPEB.html</a></li>
+<li><a href="https://sandsprite.com/CodeStuff/Understanding_the_Peb_Loader_Data_List.html"target="_blank" rel="external nofollow noopener noreferrer">https://sandsprite.com/CodeStuff/Understanding_the_Peb_Loader_Data_List.html</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/ntdef/ns-ntdef-list_entry"target="_blank" rel="external nofollow noopener noreferrer">https://learn.microsoft.com/en-us/windows/win32/api/ntdef/ns-ntdef-list_entry</a></li>
+<li><a href="http://undocumented.ntinternals.net/index.html?page=UserMode%2FStructures%2FLDR_MODULE.html"target="_blank" rel="external nofollow noopener noreferrer">http://undocumented.ntinternals.net/index.html?page=UserMode%2FStructures%2FLDR_MODULE.html</a></li>
+<li><a href="https://deepwiki.com/Offensive-Panda/ProcessInjectionTechniques/4.2-peb-walking-and-dynamic-api-resolution"target="_blank" rel="external nofollow noopener noreferrer">https://deepwiki.com/Offensive-Panda/ProcessInjectionTechniques/4.2-peb-walking-and-dynamic-api-resolution</a></li>
+<li><a href="https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/exploring-process-environment-block"target="_blank" rel="external nofollow noopener noreferrer">https://www.ired.team/miscellaneous-reversing-forensics/windows-kernel-internals/exploring-process-environment-block</a></li>
+<li><a href="https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb"target="_blank" rel="external nofollow noopener noreferrer">https://learn.microsoft.com/en-us/windows/win32/api/winternl/ns-winternl-peb</a></li>
+<li><a href="https://malwaretech.com/wiki/locating-modules-via-the-peb-x64"target="_blank" rel="external nofollow noopener noreferrer">https://malwaretech.com/wiki/locating-modules-via-the-peb-x64</a></li>
+<li><a href="https://github.com/corkami/pics/blob/master/binary/pe102/pe102.pdf"target="_blank" rel="external nofollow noopener noreferrer">https://github.com/corkami/pics/blob/master/binary/pe102/pe102.pdf</a></li>
+</ul>
+</div><div class="post-footer" id="post-footer">
+  <div class="post-info">
+    <div class="post-info-line">
+      <div class="post-info-mod"><span title="Updated on 2025-10-30 09:20:28">Updated on 2025-10-30&nbsp;</span>
+      </div><div class="post-info-license">
+            <span><a rel="license external nofollow noopener noreferrer" href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a></span>
+          </div></div><div class="post-info-line">
+        <div class="post-info-md"></div>
+        <div class="post-info-share">
+          <span><a href="javascript:void(0);" title="Share on X" data-sharer="twitter" data-url="https://moval0x1.github.io/posts/the-peb-walk-anatomy/" data-title="The PEB Walk Anatomy" data-via="moval0x1" data-hashtags="Malware,Reversing,Shellcode,Windows Internals"><i class="fa-brands fa-x-twitter fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Facebook" data-sharer="facebook" data-url="https://moval0x1.github.io/posts/the-peb-walk-anatomy/" data-hashtag="Malware"><i class="fa-brands fa-facebook-square fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on Linkedin" data-sharer="linkedin" data-url="https://moval0x1.github.io/posts/the-peb-walk-anatomy/"><i class="fa-brands fa-linkedin fa-fw" aria-hidden="true"></i></a>
+  <a href="javascript:void(0);" title="Share on WhatsApp" data-sharer="whatsapp" data-url="https://moval0x1.github.io/posts/the-peb-walk-anatomy/" data-title="The PEB Walk Anatomy" data-web><i class="fa-brands fa-whatsapp fa-fw" aria-hidden="true"></i></a>
+  </span>
+        </div>
+      </div></div>
+
+  <div class="post-info-more">
+    <section class="post-tags"><i class="fa-solid fa-tags fa-fw me-1" aria-hidden="true"></i><a href="/tags/malware/" class="post-tag" title="Tags - Malware">Malware</a><a href="/tags/reversing/" class="post-tag" title="Tags - Reversing">Reversing</a><a href="/tags/shellcode/" class="post-tag" title="Tags - Shellcode">Shellcode</a><a href="/tags/windows-internals/" class="post-tag" title="Tags - Windows Internals">Windows Internals</a></section>
+    <section><span><a href="javascript:void(0);" onclick="window.history.back();">Back</a></span>&nbsp;|&nbsp;<span><a href="/">Home</a></span>
+    </section>
+  </div><div class="post-nav"><a href="/posts/automating-tasks-with-x64dbg-scripts/" class="post-nav-item" rel="prev" title="Automating Tasks With X64dbg Scripts"><i class="fa-solid fa-angle-left fa-fw" aria-hidden="true"></i>Automating Tasks With X64dbg Scripts</a></div>
+</div>
+</article>
+
+  <aside class="toc" id="toc-auto" aria-label="Contents"><h2 class="toc-title">Contents&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden="true"></i></h2>
+      <div class="toc-content" id="toc-content-auto"></div></aside></main><footer class="footer">
+    <div class="footer-container"><div class="footer-line powered">Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow noopener noreferrer" title="Hugo 0.152.2"><img class="hugo-icon" src="/images/hugo.min.svg" alt="Hugo logo" /> Hugo</a> | Theme - <a href="https://github.com/hugo-fixit/FixIt" target="_blank" rel="external" title="FixIt v0.4.0-alpha.2-20251023040336-063af2cd"><img class="fixit-icon" src="/images/fixit.min.svg" alt="FixIt logo" /> FixIt</a>
+        </div><div class="footer-line copyright" itemscope itemtype="http://schema.org/CreativeWork"><i class="fa-regular fa-copyright fa-fw" aria-hidden="true"></i>
+            <span itemprop="copyrightYear">2025</span><span class="author" itemprop="copyrightHolder">
+              <a href="/about">moval0x1</a></span></div></div>
+  </footer></div><div class="widgets"><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role="button" aria-label="Back to Top"><i class="fa-solid fa-arrow-up fa-fw" aria-hidden="true"></i><span class="variant-numeric d-none">0%</span>
+        </div></div><div id="mask"></div><noscript>
+    <div class="noscript-warning">This website works best with JavaScript enabled.</div>
+  </noscript>
+</div><link rel="stylesheet" href="/lib/lightgallery/css/lightgallery-bundle.min.css"><link rel="stylesheet" href="/lib/cookieconsent/cookieconsent.min.css"><script src="/lib/lightgallery/lightgallery.min.js" defer></script><script src="/lib/lightgallery/plugins/thumbnail/lg-thumbnail.min.js" defer></script><script src="/lib/lightgallery/plugins/zoom/lg-zoom.min.js" defer></script><script src="/lib/sharer/sharer.min.js" async defer></script><script src="/lib/typeit/index.umd.js" defer></script><script src="/lib/cookieconsent/cookieconsent.min.js" defer></script><script src="/posts/the-peb-walk-anatomy/config/page.js" defer></script><script src="/js/theme.min.js" defer></script></body>
+</html>

@@ -1,188 +1,22 @@
-<rss xmlns:atom="http://www.w3.org/2005/Atom" version="2.0">
-    <channel>
-        <title>Scripts - Tag - The Reverser&#39;s Draft</title>
-        <link>https://moval0x1.github.io/tags/scripts/</link>
-        <description>Scripts - Tag - The Reverser&#39;s Draft</description>
-        <generator>Hugo -- gohugo.io</generator><language>en-us</language><lastBuildDate>Wed, 28 Aug 2024 19:23:17 -0300</lastBuildDate><atom:link href="https://moval0x1.github.io/tags/scripts/" rel="self" type="application/rss+xml" /><item>
-    <title>Automating Tasks With x64dbg Scripts</title>
-    <link>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</link>
-    <pubDate>Wed, 28 Aug 2024 19:23:17 -0300</pubDate>
-    <author>moval0x1</author>
-    <guid>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</guid>
-    <description><![CDATA[<h2 id="a-short-overview-of-x64dbg">A short overview of x64dbg</h2>
-<p></p>
-<p>According to <a href="https://x64dbg.com/#" target="_blank" rel="noopener noreffer "><strong>x64bg</strong></a> website, it is <em>an open-source x64/x32 debugger for windows</em>. You can find an extensible list of features there.</p>
-<p>If you are generally interested in reverse engineering, you&rsquo;ll undoubtedly use x64dbg and I&rsquo;m sure you&rsquo;ll love it. Thanks for the fantastic tool <a href="https://github.com/mrexodia" target="_blank" rel="noopener noreffer "><strong>mrexodia</strong></a>.</p>
-<h2 id="what-are-x64dbg-scripts">What are x64dbg scripts?</h2>
-<p>x64dbg scripts are small chunks of instructions that are executed step by step. All the script commands are described <a href="https://help.x64dbg.com/en/latest/commands/index.html" target="_blank" rel="noopener noreffer "><strong>here</strong></a>. Let&rsquo;s start with a <em>&ldquo;Hello World!&rdquo;</em> as usual.</p>
-<p>We can do it in two different ways: <a href="https://help.x64dbg.com/en/latest/commands/script/log.html" target="_blank" rel="noopener noreffer "><strong>log</strong></a> command or <a href="https://help.x64dbg.com/en/latest/commands/script/msg.html" target="_blank" rel="noopener noreffer "><strong>msg</strong></a> command. Both of them are super easy to work with!</p>
-<h2 id="how-can-we-use-it">How can we use it?</h2>
-<p>It is possible to execute these commands directly on the script tab, save a file, and load it on the script part, or type both in the <strong>command bar</strong>. In the first example, I used the <strong>command bar</strong> to execute the script.</p>
-<h3 id="some-simple-examples">Some simple examples</h3>
-<h4 id="log-command">Log command</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">log</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>
-</span></span></code></pre></div><p></p>
-<h4 id="msg-command">Msg command</h4>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;Hello World!&#34;</span>
-</span></span></code></pre></div><p></p>
-<h2 id="using-it-in-real-life">Using it in real life</h2>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/dwight-lets-do-this.gif" title="Lets do this!" data-thumbnail="/images/x64dbgScripts/dwight-lets-do-this.gif" data-sub-html="<h2>Let&#39;s do this!</h2><p>Lets do this!</p>">
-        
-    </a><figcaption class="image-caption">Let's do this!</figcaption>
-    </figure></p>
-<h2 id="getting-the-first-malware-sample">Getting the first malware sample</h2>
-<p>On <a href="https://bazaar.abuse.ch/sample/7e18e5fe9e980c48ad67cc2ce7423e818e15c1256e2ffe4ce85c5cfbd5b30877/" target="_blank" rel="noopener noreffer "><strong>MalwareBazaar</strong></a> I&rsquo;ve collect a <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.darkgate" target="_blank" rel="noopener noreffer "><strong>DarkGate</strong></a> sample to start our analyzis.</p>
-<blockquote>
-<p>First documented in 2018, DarkGate is a commodity loader with features that include the ability to download and execute files to memory, a Hidden Virtual Network Computing (HVNC) module, keylogging, information-stealing capabilities, and privilege escalation. DarkGate makes use of legitimate AutoIt files and typically runs multiple AutoIt scripts. New versions of DarkGate have been advertised on a Russian language eCrime forum since May 2023.</p>
-</blockquote>
-<h2 id="understand-it-first-part">Understand it, first part</h2>
-<p>This sample dropped an <strong>AutoIt</strong> and started it, so it was not a good choice in this example of x64dbg scripts. At that time, I had just opened the MalwareBazaar website and collected the first sample. So, I&rsquo;ve decided to keep it to show another option (a quite simple one).</p>
-<p>When I opened the debugger, I focused on creating the process. My thoughts were to use <a href="https://learn.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessa" target="_blank" rel="noopener noreffer "><strong>CreateProcessA</strong></a> to collect the second parameter, which is the command line, and log it.</p>
-<h2 id="crafting-the-easiest-script-in-the-world">Crafting the easiest script in the world</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#75715e">// Go to entrypoint
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">run</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Clear all breakpoints
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">bpc</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bphc</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bpmc</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Set the breakpoint
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">bp</span> <span style="color:#a6e22e">CreateProcessA</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">run</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#75715e">// Log the commandLine argument
-</span></span></span><span style="display:flex;"><span><span style="color:#75715e"></span><span style="color:#a6e22e">log</span> <span style="color:#e6db74">&#34;[+] {s:esp+8}&#34;</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;Now, take a look on the LOG tab!&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ret</span>
-</span></span></code></pre></div><p>To load it on the x64dbg, we can find a tab called &ldquo;Script&rdquo;.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-script-tab.png" title="x64dbg script tab" data-thumbnail="/images/x64dbgScripts/x64dbg-script-tab.png" data-sub-html="<h2>x64dbg script tab</h2><p>x64dbg script tab</p>">
-        
-    </a><figcaption class="image-caption">x64dbg script tab</figcaption>
-    </figure></p>
-<p><strong>Right click &gt; Load Script</strong> and then load from a file or paste it directly.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-load-script-options.png" title="x64dbg load script" data-thumbnail="/images/x64dbgScripts/x64dbg-load-script-options.png" data-sub-html="<h2>x64dbg load script options</h2><p>x64dbg load script</p>">
-        
-    </a><figcaption class="image-caption">x64dbg load script options</figcaption>
-    </figure></p>
-<p>And that is the result of running this script.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-log-darkgate.png" title="x64dbg log script execution" data-thumbnail="/images/x64dbgScripts/x64dbg-log-darkgate.png" data-sub-html="<h2>x64dbg log tab after script execution</h2><p>x64dbg log script execution</p>">
-        
-    </a><figcaption class="image-caption">x64dbg log tab after script execution</figcaption>
-    </figure></p>
-<p>Really easy, isn&rsquo;t it? Let&rsquo;s try another one with more challenges to solve.</p>
-<h2 id="getting-the-second-malware-sample">Getting the second malware sample</h2>
-<p>Here I collect a really good example to this post, a <a href="https://malpedia.caad.fkie.fraunhofer.de/details/win.mars_stealer" target="_blank" rel="noopener noreffer "><strong>MarsStealer</strong></a> sample from <a href="https://bazaar.abuse.ch/sample/6509ea13b16d01894b8c084fc4fd292651d1ae88a59dfc63d2f87d8dbbcc6f03/" target="_blank" rel="noopener noreffer "><strong>MalwareBazaar</strong></a>.</p>
-<blockquote>
-<p>3xp0rt describes Mars Stealer as an improved successor of Oski Stealer, supporting stealing from current browsers and targeting crypto currencies and 2FA plugins.</p>
-</blockquote>
-<h2 id="understand-it-second-part">Understand it, second part</h2>
-<h3 id="triage">Triage</h3>
-<p>On <a href="https://github.com/horsicq/Detect-It-Easy" target="_blank" rel="noopener noreffer "><strong>DiE</strong></a> it does not tell us much about the file, looks like a <em>normal</em> file, right?</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/die-marsstealer.png" title="DiE marsStealer scan" data-thumbnail="/images/x64dbgScripts/die-marsstealer.png" data-sub-html="<h2>DiE MarsStealer scan</h2><p>DiE marsStealer scan</p>">
-        
-    </a><figcaption class="image-caption">DiE MarsStealer scan</figcaption>
-    </figure></p>
-<p>Using a second <a href="https://github.com/4n0nym0us/4n4lDetector" target="_blank" rel="noopener noreffer "><strong>option</strong></a> to scan, we find out that we are dealing with a version of <a href="https://www.oreans.com/Themida.php" target="_blank" rel="noopener noreffer "><strong>Themida</strong></a>.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/4detector-themida.png" title="4detector themida" data-thumbnail="/images/x64dbgScripts/4detector-themida.png" data-sub-html="<h2>Themida 2.x is identified</h2><p>4detector themida</p>">
-        
-    </a><figcaption class="image-caption">Themida 2.x is identified</figcaption>
-    </figure></p>
-<h3 id="the-themida-script">The Themida Script</h3>
-<p>So, this time, I was really lucky! Now, I have a perfect example of how scripts can be helpful in our daily jobs.
-On the x64dbg Github we found some excellent scripts and fortunately, one of them is a <a href="https://github.com/x64dbg/Scripts/blob/9decfb862e11052b53d045a63e7fcd927fe8027f/Themida%20v2.x.x.x%20OEP%20Finder.txt" target="_blank" rel="noopener noreffer "><strong>Themida v2.x.x.x OEP Finder by Yildo &amp; Mobile46</strong></a></p>
-<p>One of the first comments there, tell us:</p>
-<blockquote>
-<p>Always use an anti-anti-debug plugin (SharpOD, ScyllaHide, etc.)</p>
-</blockquote>
-<p>Ok! I&rsquo;ve setting up my debugger with the Themida profile offered by <a href="https://github.com/x64dbg/ScyllaHide" target="_blank" rel="noopener noreffer "><strong>ScyllaHide</strong></a>.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-scyllahide-themida-profile.png" title="ScyllaHide Themida profile" data-thumbnail="/images/x64dbgScripts/x64dbg-scyllahide-themida-profile.png" data-sub-html="<h2>ScyllaHide Themida profile</h2><p>ScyllaHide Themida profile</p>">
-        
-    </a><figcaption class="image-caption">ScyllaHide Themida profile</figcaption>
-    </figure></p>
-<p>To run the script, we can press the space bar and wait for the OEP (Original EntryPoint).</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-script-loaded.png" title="x64dbg script loaded" data-thumbnail="/images/x64dbgScripts/x64dbg-script-loaded.png" data-sub-html="<h2>x64dbg Script Loaded</h2><p>x64dbg script loaded</p>">
-        
-    </a><figcaption class="image-caption">x64dbg Script Loaded</figcaption>
-    </figure></p>
-<p>After all the steps to execute, we got the OEP.</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-themida-script-finished.png" title="x64dbg OEP" data-thumbnail="/images/x64dbgScripts/x64dbg-themida-script-finished.png" data-sub-html="<h2>OEP found by the themida script</h2><p>x64dbg OEP</p>">
-        
-    </a><figcaption class="image-caption">OEP found by the themida script</figcaption>
-    </figure></p>
-<p>To dump it you can easily use the Scylla with:
-<strong>IAT Autosearch &gt; Get Imports &gt; Dump &gt; Fix Dump</strong>.</p>
-<p>And then&hellip; you can analyze the malware without any problem :)</p>
-<p><figure><a class="lightgallery" href="/images/x64dbgScripts/x64dbg-themida-unpacked.png" title="x64dbg themida unpacked" data-thumbnail="/images/x64dbgScripts/x64dbg-themida-unpacked.png" data-sub-html="<h2>Themida unpacked using OEP Finder by Yildo &amp; Mobile46</h2><p>x64dbg themida unpacked</p>">
-        
-    </a><figcaption class="image-caption">Themida unpacked using OEP Finder by Yildo & Mobile46</figcaption>
-    </figure></p>
-<h2 id="breaking-down-the-script">Breaking Down the Script</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">bpd</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bphd</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bpmd</span>
-</span></span></code></pre></div><p>These commands are used to clear or disable any existing breakpoints to ensure they do not interfere with the script’s execution:</p>
-<ul>
-<li><code>bpd</code>: Clear all data breakpoints.</li>
-<li><code>bphd</code>: Clear all hardware breakpoints.</li>
-<li><code>bpmd</code>: Clear all memory breakpoints.</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">mov</span> <span style="color:#a6e22e">$sectionAddress</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">mod</span>.<span style="color:#a6e22e">main</span>() <span style="color:#f92672">+</span> <span style="color:#a6e22e">mem</span>.<span style="color:#a6e22e">size</span>(<span style="color:#a6e22e">mod</span>.<span style="color:#a6e22e">main</span>())
-</span></span></code></pre></div><p>It calculates the address where the section starts by adding the size of the main module to the base address of the module.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">cmp</span> <span style="color:#a6e22e">mem</span>.<span style="color:#a6e22e">isvalid</span>(<span style="color:#a6e22e">$sectionAddress</span>)<span style="color:#f92672">,</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">je</span> <span style="color:#a6e22e">error</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">cmp</span> <span style="color:#a6e22e">mem</span>.<span style="color:#a6e22e">iscode</span>(<span style="color:#a6e22e">$sectionAddress</span>)<span style="color:#f92672">,</span> <span style="color:#ae81ff">0</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">je</span> <span style="color:#a6e22e">error</span>
-</span></span></code></pre></div><ul>
-<li><code>mem.isvalid($sectionAddress)</code>: Checks if the memory at <code>$sectionAddress</code> is valid.</li>
-<li><code>mem.iscode($sectionAddress)</code>: Checks if the memory at <code>$sectionAddress</code> contains executable code.</li>
-</ul>
-<p>If either check fails, it jumps to the error label, which outputs an error message.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">mov</span> <span style="color:#a6e22e">$backup</span><span style="color:#f92672">,</span> [<span style="color:#a6e22e">$sectionAddress</span>]
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bph</span> <span style="color:#a6e22e">VirtualProtect</span>
-</span></span></code></pre></div><ul>
-<li><code>mov $backup, [$sectionAddress]</code>: Saves the current value at <code>$sectionAddress</code> to <code>$backup</code>.</li>
-<li><code>bph VirtualProtect</code>: Sets a hardware breakpoint on <strong>VirtualProtect</strong>, a function used to change memory protection, to monitor modifications.</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">loop</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">erun</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">cmp</span> [<span style="color:#a6e22e">$sectionAddress</span>]<span style="color:#f92672">,</span> <span style="color:#a6e22e">$backup</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">jne</span> <span style="color:#66d9ef">continue</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">jmp</span> <span style="color:#a6e22e">loop</span>
-</span></span></code></pre></div><ul>
-<li><code>erun</code>: Executes the code until a breakpoint is hit or the process continues.</li>
-<li><code>cmp [$sectionAddress], $backup</code>: Compares the current value at <code>$sectionAddress</code> with the <code>$backup</code> value.</li>
-</ul>
-<p>If the values are not equal <strong>(jne)</strong>, it jumps to the continue label. Otherwise, it loops, repeatedly checking if the value has changed.</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#66d9ef">continue</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">erun</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">erun</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bphc</span> <span style="color:#a6e22e">VirtualProtect</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">bpm</span> <span style="color:#a6e22e">$sectionAddress</span><span style="color:#f92672">,</span> <span style="color:#a6e22e">x</span>
-</span></span><span style="display:flex;"><span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">erun</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">d</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">cmt</span> <span style="color:#a6e22e">cip</span><span style="color:#f92672">,</span> <span style="color:#e6db74">&#34;OEP&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ret</span>
-</span></span></code></pre></div><ul>
-<li><code>erun (executed twice)</code>: Continues the execution until it hits another breakpoint.</li>
-<li><code>bphc VirtualProtect</code>: Clears the hardware breakpoint on VirtualProtect.</li>
-<li><code>bpm $sectionAddress, x</code>: Sets a memory breakpoint (on execute) at <code>$sectionAddress</code>.</li>
-<li><code>erun</code>: Continues execution until the memory breakpoint is hit.</li>
-<li><code>d</code>: Disassembles the current address.</li>
-<li><code>cmt cip, &quot;OEP&quot;</code>: Comments the current instruction pointer <strong>(IP)</strong> with <em>&ldquo;OEP&rdquo;</em>, marking the found Original Entry Point.</li>
-</ul>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-as" data-lang="as"><span style="display:flex;"><span><span style="color:#a6e22e">error</span><span style="color:#f92672">:</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">msg</span> <span style="color:#e6db74">&#34;This PE file is not supported!&#34;</span>
-</span></span><span style="display:flex;"><span><span style="color:#a6e22e">ret</span>
-</span></span></code></pre></div><p>If the script encounters an unsupported <strong>PE</strong> file, it outputs an error message and terminates.</p>
-<h2 id="conclusion">Conclusion</h2>
-<p>You can create scripts to automate most repetitive tasks or make them help, such as unpacking a specific packer, such as Themida.</p>
-]]></description>
-</item>
-</channel>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Scripts - Tag - The Reverser&#39;s Draft</title>
+    <link>https://moval0x1.github.io/tags/scripts/</link>
+    <description>The Reverser&#39;s Draft</description>
+    <generator>Hugo 0.152.2 &amp; FixIt v0.4.0-alpha.2-20251023040336-063af2cd</generator>
+    <language>en-us</language>
+    <managingEditor>moval0x1@gmail.com (moval0x1)</managingEditor>
+    <webMaster>moval0x1@gmail.com (moval0x1)</webMaster>
+    <lastBuildDate>Wed, 28 Aug 2024 19:23:17 -0300</lastBuildDate>
+    <atom:link href="https://moval0x1.github.io/tags/scripts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Automating Tasks With x64dbg Scripts</title>
+      <link>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</link>
+      <pubDate>Wed, 28 Aug 2024 19:23:17 -0300</pubDate><author>moval0x1@gmail.com (moval0x1)</author>
+      <guid>https://moval0x1.github.io/posts/automating-tasks-with-x64dbg-scripts/</guid>
+      <category domain="https://moval0x1.github.io/categories/scripts/">Scripts</category>
+      <description>&lt;h2 class=&#34;heading-element&#34; id=&#34;a-short-overview-of-x64dbg&#34;&gt;&lt;span&gt;A short overview of x64dbg&lt;/span&gt;&#xD;&#xA;  &lt;a href=&#34;#a-short-overview-of-x64dbg&#34; class=&#34;heading-mark&#34;&gt;&#xD;&#xA;    &lt;svg class=&#34;octicon octicon-link&#34; viewBox=&#34;0 0 16 16&#34; version=&#34;1.1&#34; width=&#34;16&#34; height=&#34;16&#34; aria-hidden=&#34;true&#34;&gt;&lt;path d=&#34;m7.775 3.275 1.25-1.25a3.5 3.5 0 1 1 4.95 4.95l-2.5 2.5a3.5 3.5 0 0 1-4.95 0 .751.751 0 0 1 .018-1.042.751.751 0 0 1 1.042-.018 1.998 1.998 0 0 0 2.83 0l2.5-2.5a2.002 2.002 0 0 0-2.83-2.83l-1.25 1.25a.751.751 0 0 1-1.042-.018.751.751 0 0 1-.018-1.042Zm-4.69 9.64a1.998 1.998 0 0 0 2.83 0l1.25-1.25a.751.751 0 0 1 1.042.018.751.751 0 0 1 .018 1.042l-1.25 1.25a3.5 3.5 0 1 1-4.95-4.95l2.5-2.5a3.5 3.5 0 0 1 4.95 0 .751.751 0 0 1-.018 1.042.751.751 0 0 1-1.042.018 1.998 1.998 0 0 0-2.83 0l-2.5 2.5a1.998 1.998 0 0 0 0 2.83Z&#34;&gt;&lt;/path&gt;&lt;/svg&gt;&#xD;&#xA;  &lt;/a&gt;&#xD;&#xA;&lt;/h2&gt;&lt;p&gt;&lt;img loading=&#34;lazy&#34; src=&#39;https://moval0x1.github.io/images/x64dbgScripts/x64dbg-logo.png&#39; alt=&#34;x64dbg logo&#34; height=&#34;430&#34; width=&#34;479&#34;&gt;&lt;/p&gt;</description>
+    </item>
+  </channel>
 </rss>
